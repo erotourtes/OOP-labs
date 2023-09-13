@@ -1,4 +1,4 @@
-package com.github.erotourtes.Task2
+package com.github.erotourtes.task2
 
 import javafx.beans.property.SimpleStringProperty
 import javafx.stage.StageStyle

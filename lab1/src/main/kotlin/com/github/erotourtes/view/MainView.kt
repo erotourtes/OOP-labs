@@ -1,6 +1,6 @@
 package com.github.erotourtes.view
 
-import com.github.erotourtes.Task1.TaskView
+import com.github.erotourtes.task1.TaskView
 import javafx.scene.layout.HBox
 import tornadofx.*
 
@@ -32,7 +32,7 @@ class MainView : View("Lab 1") {
     private val changeView = { i: Int ->
         when (i) {
             1 -> centerView.replaceChildren(TaskView().root)
-            2 -> centerView.replaceChildren(com.github.erotourtes.Task2.TaskView().root)
+            2 -> centerView.replaceChildren(com.github.erotourtes.task2.TaskView().root)
             else -> throw IllegalArgumentException("Unknown task number")
         }
     }

@@ -1,4 +1,4 @@
-package com.github.erotourtes.Task1
+package com.github.erotourtes.task1
 
 import javafx.stage.StageStyle
 import tornadofx.*
