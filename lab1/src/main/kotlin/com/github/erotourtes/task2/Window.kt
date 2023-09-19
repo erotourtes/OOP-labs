@@ -8,21 +8,30 @@ import tornadofx.*
 
 class ListController : Controller() {
     val items: ObservableList<String> = FXCollections.observableArrayList("IM-21", "IM-22", "IM-23", "IM-24")
+    private var message = ""
 
-    fun handleChange(listview: ListView<String>, message: SimpleStringProperty) {
+    fun handleChange(listview: ListView<String>) {
         listview.selectionModel.selectedItemProperty().addListener { _, _, newValue ->
-            message.value = newValue
+            message = newValue
         }
+    }
+    fun handleBtnChange(message: SimpleStringProperty) {
+        message.value = this.message
     }
 }
 
 class Window : Fragment("Window") {
     val message: SimpleStringProperty by param()
-    private val controller: ListController by inject()
+    private val controller = ListController()
 
-    override val root = hbox {
-        listview(controller.items) {
-            controller.handleChange(this, message)
+    override val root = vbox {
+        listview(controller.items) { controller.handleChange(this) }
+        hbox {
+            button("Show") { action { controller.handleBtnChange(message) } }
+            button("Cancel") { action {
+                message.value = ""
+                close()
+            } }
         }
     }
 }
