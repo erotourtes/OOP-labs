@@ -72,6 +72,7 @@ func copyReport(toLab string) {
 	println("Created report dir", reportDst)
 	for _, srcEntry := range reportSrc {
 		src, err := os.Open(filepath.Join(REPORT_PATH, filepath.Base(srcEntry.Name())))
+    defer src.Close()
 		check(err)
 
 		dst, err := os.Create(filepath.Join(reportDst, filepath.Base(src.Name())))
