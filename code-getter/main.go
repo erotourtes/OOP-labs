@@ -17,6 +17,8 @@ const REPORT_PATH = "../report-tex/"
 const LATEX_FORMAT = "\\lstinputlisting[caption=%s, escapechar=, language=Kotlin]{%s}\n"
 const SUBSECTION_FORMAT = "\\subsection{Module: %s}\n"
 
+var EXCLUDE_FILES = []string{"styles.sty"}
+
 func main() {
 	labNum := readUserInput()
 	copyReport(labNum)
@@ -68,9 +70,18 @@ func copyReport(toLab string) {
 		return
 	}
 
-	os.Mkdir(reportDst, os.ModePerm)
+  err = os.Mkdir(reportDst, os.ModePerm)
+  if err != nil {
+      println("Error creating directory, maybe lab dir is not exists")
+      os.Exit(1)
+  }
+
 	println("Created report dir", reportDst)
 	for _, srcEntry := range reportSrc {
+    if (contains(EXCLUDE_FILES, srcEntry.Name())) {
+      println("Skipping", srcEntry.Name())
+      continue
+    }
 		src, err := os.Open(filepath.Join(REPORT_PATH, filepath.Base(srcEntry.Name())))
     defer src.Close()
 		check(err)
@@ -84,6 +95,15 @@ func copyReport(toLab string) {
 
 		println("Copied to the", dst.Name())
 	}
+}
+
+func contains(slice []string, value string) bool {
+  for _, item := range slice {
+    if item == value {
+      return true
+    }
+  }
+  return false
 }
 
 func pasteCode(toLab string) []string {

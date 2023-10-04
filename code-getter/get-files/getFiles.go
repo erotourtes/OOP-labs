@@ -34,7 +34,8 @@ func getAllFilesAuxiliary(channel chan string, dir string, wg *sync.WaitGroup, i
 
 	dirEntry, err := os.ReadDir(dir)
 	if err != nil {
-		panic(err)
+    println("Error reading dir", dir)
+    os.Exit(1)
 	}
 
 	for _, f := range dirEntry {
