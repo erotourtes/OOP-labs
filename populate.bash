@@ -1,4 +1,7 @@
 #!/bin/bash
 
 cd ./code-getter
-go build main.go && ./main
+if [ ! -f main ]; then
+    go build main.go
+fi
+./main
