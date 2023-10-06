@@ -55,6 +55,7 @@ class Ellipse(gc: GraphicsContext) : Shape(gc) {
     }
 
     override fun draw(curDm: Dimension) {
-        TODO()
+        dm.copyFrom(getEllipseDimensions(curDm))
+        draw()
     }
 }

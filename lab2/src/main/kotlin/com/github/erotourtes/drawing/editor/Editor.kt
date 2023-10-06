@@ -48,9 +48,9 @@ abstract class Editor(private val canvas: Canvas, private val shapes: ShapesList
     }
 
     protected open fun drawShowLine() {
-        val tmpColor = gc.stroke
-        gc.stroke = Color.BLUE
-        gc.strokeRect(dm)
-        gc.stroke = tmpColor
+        gc.drawOnce {
+            gc.stroke = Color.BLUE
+            gc.strokeRect(dm)
+        }
     }
 }

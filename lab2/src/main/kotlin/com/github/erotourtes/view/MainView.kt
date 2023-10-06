@@ -20,11 +20,12 @@ class MainView : View("Lab2") {
     private fun createMenu(): List<MenuItemInfo> {
         val group = ToggleGroup()
         val canvas = this.canvas.canvas
+        // TODO(): editor is in bad design
         val menuList = listOf(
             MenuItemInfo("точка", { PointEditor(canvas, shapes) }, group, true),
             MenuItemInfo("лінія", { LineEditor(canvas, shapes) }, group),
             MenuItemInfo("прямокутник", { RectEditor(canvas, shapes) }, group),
-            MenuItemInfo("еліпс", {}, group),
+            MenuItemInfo("еліпс", { EllipseEditor(canvas, shapes) }, group),
         )
 
         menuList.find { it.selected }?.action?.let { it() }

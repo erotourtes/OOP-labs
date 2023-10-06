@@ -1,19 +1,28 @@
 package com.github.erotourtes.utils
 
+import kotlin.math.abs
+
 class Dimension {
     private var x1: Double = 0.0
     private var y1: Double = 0.0
     private var x2: Double = 0.0
     private var y2: Double = 0.0
 
-    fun setStart(x: Double, y: Double) {
+    val width: Double
+        get() = abs(x2 - x1)
+    val height: Double
+        get() = abs(y2 - y1)
+
+    fun setStart(x: Double, y: Double): Dimension {
         x1 = x
         y1 = y
+        return this
     }
 
-    fun setEnd(x: Double, y: Double) {
+    fun setEnd(x: Double, y: Double): Dimension {
         x2 = x
         y2 = y
+        return this
     }
 
     fun copyTo(dst: Dimension) {
