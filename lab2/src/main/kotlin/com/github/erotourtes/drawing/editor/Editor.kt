@@ -1,22 +1,20 @@
 package com.github.erotourtes.drawing.editor
 
 import com.github.erotourtes.drawing.shape.*
-import javafx.scene.canvas.Canvas
 import javafx.scene.paint.Color
 import com.github.erotourtes.utils.*
 import javafx.scene.canvas.GraphicsContext
 import javafx.scene.input.MouseEvent
 
-abstract class Editor(private val canvas: Canvas, private val shapes: ShapesList) {
+abstract class Editor(private val shapes: ShapesList, protected val gc: GraphicsContext) {
     protected val dm = Dimension()
-    protected val gc: GraphicsContext = canvas.graphicsContext2D
-
     protected abstract val shape: Shape
 
     open fun listenToEvents() {
-        canvas.setOnMousePressed(this::onMousePressed)
-        canvas.setOnMouseDragged(this::onMouseDragged)
-        canvas.setOnMouseReleased(this::onMouseReleased)
+        val c = gc.canvas
+        c.setOnMousePressed(this::onMousePressed)
+        c.setOnMouseDragged(this::onMouseDragged)
+        c.setOnMouseReleased(this::onMouseReleased)
     }
 
     protected open fun onMousePressed(e: MouseEvent) {
@@ -43,9 +41,7 @@ abstract class Editor(private val canvas: Canvas, private val shapes: ShapesList
         for (shape in shapes) shape.draw()
     }
 
-    private fun clear() {
-        gc.clearRect(0.0, 0.0, gc.canvas.width, gc.canvas.height)
-    }
+    private fun clear() = gc.clearRect(0.0, 0.0, gc.canvas.width, gc.canvas.height)
 
     protected open fun drawShowLine() {
         gc.drawOnce {

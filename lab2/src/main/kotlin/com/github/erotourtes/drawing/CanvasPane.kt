@@ -3,9 +3,7 @@ package com.github.erotourtes.drawing
 import javafx.scene.canvas.Canvas
 import javafx.scene.layout.Pane
 
-class CanvasPane : Pane() {
-    val canvas: Canvas = Canvas()
-
+class CanvasPane(canvas: Canvas) : Pane() {
     init {
         children.add(canvas)
 

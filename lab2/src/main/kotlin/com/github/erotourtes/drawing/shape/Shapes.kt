@@ -10,8 +10,8 @@ class Point(gc: GraphicsContext) : Shape(gc) {
         val radius = 12.0
         gc.drawOnce {
             setProperties()
-            val (start,_) = dm.getBoundaries()
-            fillOval(start.x, start.y, radius, radius)
+            val (x, y) = dm.getBoundaries().first
+            fillOval(x, y, radius, radius)
         }
     }
 }

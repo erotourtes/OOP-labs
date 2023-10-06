@@ -1,4 +1,4 @@
-package com.github.erotourtes.app
+package com.github.erotourtes.view
 
 import com.github.erotourtes.utils.MenuItemInfo
 import javafx.scene.control.MenuBar

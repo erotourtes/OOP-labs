@@ -2,11 +2,11 @@ package com.github.erotourtes.drawing.editor
 
 import com.github.erotourtes.drawing.shape.*
 import com.github.erotourtes.utils.*
-import javafx.scene.canvas.Canvas
+import javafx.scene.canvas.GraphicsContext
 import javafx.scene.input.MouseEvent
 import javafx.scene.paint.Color
 
-class PointEditor(canvas: Canvas, shapes: ShapesList) : Editor(canvas, shapes) {
+class PointEditor(shapes: ShapesList, gc: GraphicsContext) : Editor(shapes, gc) {
     override val shape = Point(gc)
 
     override fun onMouseDragged(e: MouseEvent) {}
@@ -16,37 +16,21 @@ class PointEditor(canvas: Canvas, shapes: ShapesList) : Editor(canvas, shapes) {
         super.onMousePressed(e)
         shape.draw(dm)
     }
-
-    init {
-        listenToEvents()
-    }
 }
 
-class LineEditor(canvas: Canvas, shapes: ShapesList) : Editor(canvas, shapes) {
+class LineEditor(shapes: ShapesList, gc: GraphicsContext) : Editor(shapes, gc) {
     override val shape = Line(gc)
-
-    init {
-        listenToEvents()
-    }
 }
 
-class RectEditor(canvas: Canvas, shapes: ShapesList) : Editor(canvas, shapes) {
+class RectEditor(shapes: ShapesList, gc: GraphicsContext) : Editor(shapes, gc) {
     override val shape = Rect(gc)
     override fun drawShowLine() {}
-
-    init {
-        listenToEvents()
-    }
 }
 
-class EllipseEditor(canvas: Canvas, shapes: ShapesList) : Editor(canvas, shapes) {
+class EllipseEditor(shapes: ShapesList, gc: GraphicsContext) : Editor(shapes, gc) {
     override val shape = Ellipse(gc)
     override fun drawShowLine() = gc.drawOnce {
         gc.stroke = Color.BLUE
         strokeRect(getEllipseDimensions(dm))
-    }
-
-    init {
-        listenToEvents()
     }
 }

@@ -1,6 +1,6 @@
 package com.github.erotourtes.view
 
-import com.github.erotourtes.app.*
+import com.github.erotourtes.drawing.CanvasHandler
 import com.github.erotourtes.drawing.CanvasPane
 import com.github.erotourtes.drawing.editor.*
 import com.github.erotourtes.utils.MenuItemInfo
@@ -9,24 +9,23 @@ import tornadofx.*
 
 
 class MainView : View("Lab2") {
-    private val canvas: CanvasPane = CanvasPane()
-    private var shapes = ShapesList(n)
+    private val canvasHandler = CanvasHandler()
 
     override val root = borderpane {
         top = MenuBar(createMenu())
-        center = canvas
+        center = CanvasPane(canvasHandler.canvas)
     }
 
     private fun createMenu(): List<MenuItemInfo> {
         val group = ToggleGroup()
-        val canvas = this.canvas.canvas
-        // TODO(): editor is in bad design
-        val menuList = listOf(
-            MenuItemInfo("точка", { PointEditor(canvas, shapes) }, group, true),
-            MenuItemInfo("лінія", { LineEditor(canvas, shapes) }, group),
-            MenuItemInfo("прямокутник", { RectEditor(canvas, shapes) }, group),
-            MenuItemInfo("еліпс", { EllipseEditor(canvas, shapes) }, group),
-        )
+        val menuList = with(canvasHandler) {
+            listOf(
+                MenuItemInfo("точка", { useEditor<PointEditor>() }, group, true),
+                MenuItemInfo("лінія", { useEditor<LineEditor>() }, group),
+                MenuItemInfo("прямокутник", { useEditor<RectEditor>() }, group),
+                MenuItemInfo("еліпс", { useEditor<EllipseEditor>() }, group),
+            )
+        }
 
         menuList.find { it.selected }?.action?.let { it() }
 
