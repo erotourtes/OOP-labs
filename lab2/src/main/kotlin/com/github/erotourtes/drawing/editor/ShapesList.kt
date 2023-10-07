@@ -21,4 +21,5 @@ class ShapesList(n: Int) : Iterable<Shape> {
         override fun hasNext(): Boolean = curIndex < size
         override fun next(): Shape = if (hasNext()) shapeArr[curIndex++]!! else throw IllegalAccessError()
     }
+    override fun toString(): String = "ShapesList(index=$shapeIndex)"
 }

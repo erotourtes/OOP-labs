@@ -49,4 +49,6 @@ class Dimension {
     }
 
     data class Point(val x: Double, val y: Double)
+
+    override fun toString(): String = "Dimension(x1=$x1, y1=$y1, x2=$x2, y2=$y2)"
 }

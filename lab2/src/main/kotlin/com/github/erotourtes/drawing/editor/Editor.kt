@@ -6,7 +6,7 @@ import com.github.erotourtes.utils.*
 import javafx.scene.canvas.GraphicsContext
 import javafx.scene.input.MouseEvent
 
-abstract class Editor(private val shapes: ShapesList, protected val gc: GraphicsContext) {
+abstract class Editor(protected val shapes: ShapesList, protected val gc: GraphicsContext) {
     protected val dm = Dimension()
     protected abstract val shape: Shape
 
@@ -34,6 +34,7 @@ abstract class Editor(private val shapes: ShapesList, protected val gc: Graphics
     }
 
     protected open fun onMouseReleased(e: MouseEvent) {
+        if (e.isDragDetect) return // returns if mouse was not dragged
         shapes.add(shape.copy())
     }
 

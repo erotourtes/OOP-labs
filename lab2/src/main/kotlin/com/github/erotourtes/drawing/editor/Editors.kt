@@ -16,6 +16,8 @@ class PointEditor(shapes: ShapesList, gc: GraphicsContext) : Editor(shapes, gc) 
         super.onMousePressed(e)
         shape.draw(dm)
     }
+
+    override fun onMouseReleased(e: MouseEvent) = shapes.add(shape.copy())
 }
 
 class LineEditor(shapes: ShapesList, gc: GraphicsContext) : Editor(shapes, gc) {
