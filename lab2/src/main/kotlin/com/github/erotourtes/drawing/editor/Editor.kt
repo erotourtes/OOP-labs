@@ -30,11 +30,12 @@ abstract class Editor(protected val shapes: ShapesList, protected val gc: Graphi
         dm.setEnd(e.x, e.y)
 
         drawShowLine()
-        shape.draw(dm)
+//        shape.draw(dm)
     }
 
     protected open fun onMouseReleased(e: MouseEvent) {
         if (e.isDragDetect) return // returns if mouse was not dragged
+        shape.draw(dm)
         shapes.add(shape.copy())
     }
 

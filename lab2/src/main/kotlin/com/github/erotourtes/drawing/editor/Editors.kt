@@ -22,17 +22,25 @@ class PointEditor(shapes: ShapesList, gc: GraphicsContext) : Editor(shapes, gc) 
 
 class LineEditor(shapes: ShapesList, gc: GraphicsContext) : Editor(shapes, gc) {
     override val shape = Line(gc)
+
+    override fun drawShowLine() = gc.drawOnce {
+        gc.stroke = Color.BLUE
+        strokeLine(dm)
+    }
 }
 
 class RectEditor(shapes: ShapesList, gc: GraphicsContext) : Editor(shapes, gc) {
     override val shape = Rect(gc)
-    override fun drawShowLine() {}
+    override fun drawShowLine()  = gc.drawOnce {
+        gc.stroke = Color.BLUE
+        strokeRect(dm)
+    }
 }
 
 class EllipseEditor(shapes: ShapesList, gc: GraphicsContext) : Editor(shapes, gc) {
     override val shape = Ellipse(gc)
     override fun drawShowLine() = gc.drawOnce {
         gc.stroke = Color.BLUE
-        strokeRect(getEllipseDimensions(dm))
+        strokeOval(getEllipseDimensions(dm))
     }
 }
