@@ -1,20 +1,19 @@
 package com.github.erotourtes.utils
 
+import com.github.erotourtes.drawing.editor.Editor
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon
 import javafx.scene.control.ToggleGroup
 
 data class MenuItemInfo(
     val name: String,
-    val action: () -> Unit,
-    val group: ToggleGroup? = null,
-    var selected: Boolean = false
+    val kotlinClass : Class<out Editor>,
+    var group: ToggleGroup? = null,
+    var action: () -> Unit = {},
 )
 
 data class ToolbarItemInfo(
-    val name: String,
     val tooltip: String,
-    val action: () -> Unit,
-    var selected: Boolean = false,
+    val kotlinClass : Class<out Editor>,
     var icon: FontAwesomeIcon? = null,
 )
 

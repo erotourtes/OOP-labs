@@ -19,10 +19,11 @@ class MenuBar(shapes: List<MenuItemInfo>) : MenuBar() {
             item("Exit")
         }
         menu("Objects") {
-            for (shape in shapes) {
-                radiomenuitem(shape.name, shape.group) {
-                    action(shape.action)
-                    isSelected = shape.selected
+            shapes.forEach {
+                radiomenuitem(it.name, it.group) {
+                    action(it.action)
+                    isSelected = false
+                    userData = it
                 }
             }
         }
