@@ -27,9 +27,11 @@ class Line(gc: GraphicsContext) : Shape(gc) {
 
 class Rect(gc: GraphicsContext) : Shape(gc) {
     init {
-        colorFill = Color.ORANGE
+        colorFill = Color.TRANSPARENT
         colorStroke = Color.BLACK
     }
+
+    override fun setDm(curDm: Dimension) = dm.copyFrom(getToCornerDimension(curDm))
 
     override fun draw() {
         gc.drawOnce {
@@ -42,7 +44,7 @@ class Rect(gc: GraphicsContext) : Shape(gc) {
 
 class Ellipse(gc: GraphicsContext) : Shape(gc) {
     init {
-        colorFill = Color.TRANSPARENT
+        colorFill = Color.ORANGE
         colorStroke = Color.BLACK
     }
 
@@ -54,8 +56,5 @@ class Ellipse(gc: GraphicsContext) : Shape(gc) {
         }
     }
 
-    override fun draw(curDm: Dimension) {
-        dm.copyFrom(getEllipseDimensions(curDm))
-        draw()
-    }
+    override fun setDm(curDm: Dimension) = dm.copyFrom(getToCornerDimension(curDm))
 }

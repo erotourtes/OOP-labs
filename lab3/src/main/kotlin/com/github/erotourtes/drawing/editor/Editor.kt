@@ -18,25 +18,22 @@ abstract class Editor(protected val shapes: ShapesList, protected val gc: Graphi
     }
 
     protected open fun onMousePressed(e: MouseEvent) {
-        clear()
-        drawAll()
+        redraw()
         dm.setStart(e.x, e.y)
     }
 
     protected open fun onMouseDragged(e: MouseEvent) {
-        clear()
-        drawAll()
+        redraw()
 
         dm.setEnd(e.x, e.y)
-
-        drawShowLine()
-//        shape.draw(dm)
+        previewLine()
     }
 
     protected open fun onMouseReleased(e: MouseEvent) {
         if (e.isDragDetect) return // returns if mouse was not dragged
-        shape.draw(dm)
+        shape.setDm(dm)
         shapes.add(shape.copy())
+        redraw()
     }
 
     private fun drawAll() {
@@ -45,10 +42,15 @@ abstract class Editor(protected val shapes: ShapesList, protected val gc: Graphi
 
     private fun clear() = gc.clearRect(0.0, 0.0, gc.canvas.width, gc.canvas.height)
 
-    protected open fun drawShowLine() {
-        gc.drawOnce {
-            gc.stroke = Color.BLUE
-            gc.strokeRect(dm)
-        }
+    protected fun redraw() {
+        clear()
+        drawAll()
+    }
+
+    abstract fun previewLine()
+
+    protected fun setPreviewProperties() {
+        gc.setLineDashes(5.0)
+        gc.stroke = Color.BLACK
     }
 }

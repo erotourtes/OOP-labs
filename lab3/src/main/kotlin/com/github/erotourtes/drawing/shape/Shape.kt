@@ -5,17 +5,14 @@ import javafx.scene.canvas.GraphicsContext
 import javafx.scene.paint.Color
 
 abstract class Shape(val gc: GraphicsContext) {
-    val dm = Dimension()
+    protected val dm = Dimension()
 
     var colorFill: Color = Color.BLACK
     var colorStroke: Color = Color.BLACK
 
     abstract fun draw()
 
-    open fun draw(curDm: Dimension) {
-        curDm.copyTo(dm)
-        draw()
-    }
+    open fun setDm(curDm: Dimension) = curDm.copyTo(dm)
 
     fun setProperties() {
         with(gc) {

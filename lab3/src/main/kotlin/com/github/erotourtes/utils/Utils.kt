@@ -9,7 +9,7 @@ data class MenuItemInfo(
     var selected: Boolean = false
 )
 
-fun getEllipseDimensions(dm: Dimension): Dimension {
+fun getToCornerDimension(dm: Dimension): Dimension {
     val w = dm.width
     val h = dm.height
     val (cx, cy) = dm.getRaw().first

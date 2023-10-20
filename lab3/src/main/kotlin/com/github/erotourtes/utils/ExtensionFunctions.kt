@@ -29,9 +29,7 @@ fun GraphicsContext.strokeLine(dm: Dimension) {
 }
 
 inline fun GraphicsContext.drawOnce(lambda: GraphicsContext.() -> Unit) {
-    val oldFill = fill
-    val oldStroke = stroke
+    save()
     lambda(this)
-    fill = oldFill
-    stroke = oldStroke
+    restore()
 }

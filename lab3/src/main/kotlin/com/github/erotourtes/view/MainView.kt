@@ -8,7 +8,7 @@ import javafx.scene.control.ToggleGroup
 import tornadofx.*
 
 
-class MainView : View("Lab2") {
+class MainView : View("Lab3") {
     private val canvasHandler = CanvasHandler()
 
     override val root = borderpane {

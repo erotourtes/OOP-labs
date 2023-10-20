@@ -4,7 +4,6 @@ import com.github.erotourtes.drawing.shape.*
 import com.github.erotourtes.utils.*
 import javafx.scene.canvas.GraphicsContext
 import javafx.scene.input.MouseEvent
-import javafx.scene.paint.Color
 
 class PointEditor(shapes: ShapesList, gc: GraphicsContext) : Editor(shapes, gc) {
     override val shape = Point(gc)
@@ -14,33 +13,39 @@ class PointEditor(shapes: ShapesList, gc: GraphicsContext) : Editor(shapes, gc) 
     override fun onMousePressed(e: MouseEvent) {
         dm.setEnd(e.x, e.y)
         super.onMousePressed(e)
-        shape.draw(dm)
+        shape.setDm(dm)
     }
 
-    override fun onMouseReleased(e: MouseEvent) = shapes.add(shape.copy())
+    override fun onMouseReleased(e: MouseEvent) {
+        shapes.add(shape.copy())
+        redraw()
+    }
+
+    override fun previewLine() {}
 }
 
 class LineEditor(shapes: ShapesList, gc: GraphicsContext) : Editor(shapes, gc) {
     override val shape = Line(gc)
 
-    override fun drawShowLine() = gc.drawOnce {
-        gc.stroke = Color.BLUE
+    override fun previewLine() = gc.drawOnce {
+        setPreviewProperties()
         strokeLine(dm)
     }
 }
 
 class RectEditor(shapes: ShapesList, gc: GraphicsContext) : Editor(shapes, gc) {
     override val shape = Rect(gc)
-    override fun drawShowLine()  = gc.drawOnce {
-        gc.stroke = Color.BLUE
-        strokeRect(dm)
+    override fun previewLine()  = gc.drawOnce {
+        setPreviewProperties()
+        strokeRect(getToCornerDimension(dm))
     }
 }
 
 class EllipseEditor(shapes: ShapesList, gc: GraphicsContext) : Editor(shapes, gc) {
     override val shape = Ellipse(gc)
-    override fun drawShowLine() = gc.drawOnce {
-        gc.stroke = Color.BLUE
-        strokeOval(getEllipseDimensions(dm))
+    override fun previewLine() = gc.drawOnce {
+        setPreviewProperties()
+        strokeOval(getToCornerDimension(dm))
+        strokeRect(getToCornerDimension(dm))
     }
 }
