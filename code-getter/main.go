@@ -14,7 +14,8 @@ import (
 
 const REPORT_PATH = "../report-tex/"
 
-const LATEX_FORMAT = "\\lstinputlisting[caption=%s, escapechar=, language=Kotlin]{%s}\n"
+// const LATEX_FORMAT = "\\lstinputlisting[caption=%s, escapechar=, language=Kotlin]{%s}\n"
+const LATEX_FORMAT = "\\lstinputlistingukr{%s}{%s}\n"
 const SUBSECTION_FORMAT = "\\subsection{Module: %s}\n"
 
 var EXCLUDE_FILES = []string{"styles.sty"}
