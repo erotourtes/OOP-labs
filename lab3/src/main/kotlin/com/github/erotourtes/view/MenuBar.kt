@@ -9,7 +9,7 @@ const val n = 100 + g
 
 class MenuBar(shapes: List<MenuItemInfo>) : MenuBar() {
     init {
-        menu("Файл") {
+        menu("File") {
             item("New...")
             item("Open...")
             item("Save as...")

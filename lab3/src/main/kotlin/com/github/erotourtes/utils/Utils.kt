@@ -1,5 +1,6 @@
 package com.github.erotourtes.utils
 
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon
 import javafx.scene.control.ToggleGroup
 
 data class MenuItemInfo(
@@ -7,6 +8,14 @@ data class MenuItemInfo(
     val action: () -> Unit,
     val group: ToggleGroup? = null,
     var selected: Boolean = false
+)
+
+data class ToolbarItemInfo(
+    val name: String,
+    val tooltip: String,
+    val action: () -> Unit,
+    var selected: Boolean = false,
+    var icon: FontAwesomeIcon? = null,
 )
 
 fun getToCornerDimension(dm: Dimension): Dimension {
