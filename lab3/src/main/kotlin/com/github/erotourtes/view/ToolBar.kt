@@ -2,6 +2,7 @@ package com.github.erotourtes.view
 
 import com.github.erotourtes.drawing.EditorHandler
 import com.github.erotourtes.drawing.editor.Editor
+import com.github.erotourtes.drawing.editor.EmptyEditor
 import com.github.erotourtes.styles.ToolbarStyles
 import com.github.erotourtes.utils.ToolbarItemInfo
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView
@@ -25,7 +26,7 @@ class ToolBar(items: List<ToolbarItemInfo>, editorHandler: EditorHandler) : HBox
                 toggleGroup = group
                 isSelected = false
                 userData = it
-                action { editorHandler.useEditor(it.kotlinClass) }
+                action { editorHandler.useEditor(if (isSelected) it.kotlinClass else EmptyEditor::class.java) }
             }
         }
 
@@ -33,10 +34,9 @@ class ToolBar(items: List<ToolbarItemInfo>, editorHandler: EditorHandler) : HBox
     }
 
     private fun listenToChanges(newValue: Editor) {
-        val editorClass = newValue::class.java
         group.toggles.forEach {
             val userData = it.userData as ToolbarItemInfo
-            if (userData.kotlinClass == editorClass) it.isSelected = true
+            it.isSelected = userData.kotlinClass == newValue.javaClass
         }
     }
 }

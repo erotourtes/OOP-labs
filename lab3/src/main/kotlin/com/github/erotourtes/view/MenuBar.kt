@@ -1,11 +1,10 @@
 package com.github.erotourtes.view
 
 import com.github.erotourtes.utils.MenuItemInfo
+import com.github.erotourtes.utils.g
+import com.github.erotourtes.utils.n
 import javafx.scene.control.MenuBar
 import tornadofx.*
-
-const val g = 22 + 1
-const val n = 100 + g
 
 class MenuBar(shapes: List<MenuItemInfo>) : MenuBar() {
     init {

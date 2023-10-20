@@ -50,11 +50,9 @@ class MainView : View("Lab3") {
         menuList.forEach { it.group = group; it.action = { editorHandler.useEditor(it.kotlinClass) } }
 
         editorHandler.listenToChanges { _, _, newValue ->
-            val editor = newValue::class.java
-
             group.toggles.forEach {
                 val userData = it.userData as MenuItemInfo
-                if (userData.kotlinClass == editor) it.isSelected = true
+                it.isSelected = userData.kotlinClass == newValue.javaClass
             }
         }
 

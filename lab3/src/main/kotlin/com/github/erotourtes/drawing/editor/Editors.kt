@@ -35,7 +35,7 @@ class LineEditor(shapes: ShapesList, gc: GraphicsContext) : Editor(shapes, gc) {
 
 class RectEditor(shapes: ShapesList, gc: GraphicsContext) : Editor(shapes, gc) {
     override val shape = Rect(gc)
-    override fun previewLine()  = gc.drawOnce {
+    override fun previewLine() = gc.drawOnce {
         setPreviewProperties()
         strokeRect(getToCornerDimension(dm))
     }
@@ -48,4 +48,15 @@ class EllipseEditor(shapes: ShapesList, gc: GraphicsContext) : Editor(shapes, gc
         strokeOval(getToCornerDimension(dm))
         strokeRect(getToCornerDimension(dm))
     }
+}
+
+class EmptyEditor(shapes: ShapesList, gc: GraphicsContext) : Editor(shapes, gc) {
+    override val shape = object : Shape(gc) {
+        override fun draw() {}
+    }
+
+    override fun onMouseDragged(e: MouseEvent) {}
+    override fun onMousePressed(e: MouseEvent) {}
+    override fun onMouseReleased(e: MouseEvent) {}
+    override fun previewLine() {}
 }

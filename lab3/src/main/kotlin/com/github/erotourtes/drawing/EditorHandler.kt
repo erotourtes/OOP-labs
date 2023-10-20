@@ -1,6 +1,6 @@
 package com.github.erotourtes.drawing
 
-import com.github.erotourtes.view.n
+import com.github.erotourtes.utils.n
 import com.github.erotourtes.drawing.editor.Editor
 import com.github.erotourtes.drawing.editor.ShapesList
 import javafx.beans.property.SimpleObjectProperty

@@ -3,6 +3,7 @@ package com.github.erotourtes.drawing.shape
 import com.github.erotourtes.utils.Dimension
 import javafx.scene.canvas.GraphicsContext
 import javafx.scene.paint.Color
+import java.lang.RuntimeException
 
 abstract class Shape(val gc: GraphicsContext) {
     protected val dm = Dimension()
@@ -22,10 +23,14 @@ abstract class Shape(val gc: GraphicsContext) {
     }
 
     fun copy(): Shape {
-        val shape = this::class.java.getConstructor(GraphicsContext::class.java).newInstance(gc)
-        shape.dm.copyFrom(dm)
-        shape.colorFill = colorFill
-        shape.colorStroke = colorStroke
-        return shape
+        try {
+            val shape = this::class.java.getConstructor(GraphicsContext::class.java).newInstance(gc)
+            shape.dm.copyFrom(dm)
+            shape.colorFill = colorFill
+            shape.colorStroke = colorStroke
+            return shape
+        } catch (e: Exception) {
+            throw RuntimeException("Can't copy a shape")
+        }
     }
 }
