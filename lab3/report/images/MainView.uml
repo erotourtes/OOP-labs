@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>com.github.erotourtes.view.MainView</OriginalElement>
+  <nodes>
+    <node x="551.5" y="1599.0">com.github.erotourtes.view.ToolBar</node>
+    <node x="-19.5" y="1614.0">com.github.erotourtes.drawing.CanvasPane</node>
+    <node x="226.5" y="1614.0">com.github.erotourtes.view.MenuBar</node>
+    <node x="-31.551785714285813" y="903.0">javafx.beans.property.SimpleObjectProperty</node>
+    <node x="803.0" y="1151.0">com.github.erotourtes.styles.ToolbarStyles.Companion</node>
+    <node x="428.4916666666667" y="828.0">com.github.erotourtes.drawing.editor.Editor</node>
+    <node x="163.54166666666663" y="566.0">com.github.erotourtes.drawing.editor.ShapesList</node>
+    <node x="224.16666666666663" y="375.0">com.github.erotourtes.drawing.editor.ShapesList.ShapeIterator</node>
+    <node x="5.0" y="1351.0">com.github.erotourtes.drawing.EditorHandler</node>
+    <node x="157.0" y="30.0">com.github.erotourtes.drawing.shape.Shape</node>
+    <node x="-286.5" y="1585.0">tornadofx.View</node>
+    <node x="-277.02261904761895" y="1783.0">com.github.erotourtes.view.MainView</node>
+    <node x="813.0" y="1395.0">com.github.erotourtes.styles.ToolbarStyles</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="com.github.erotourtes.view.MainView" target="tornadofx.View" relationship="CREATE">
+      <point x="119.0" y="-83.5" />
+      <point x="20.477380952381054" y="1762.0" />
+      <point x="271.3648809523809" y="1762.0" />
+      <point x="271.3648809523809" y="1742.0" />
+      <point x="-116.25" y="1742.0" />
+      <point x="56.75" y="68.0" />
+    </edge>
+    <edge source="com.github.erotourtes.drawing.EditorHandler" target="javafx.beans.property.SimpleObjectProperty" relationship="TO_ONE">
+      <point x="105.5" y="-83.0" />
+      <point x="321.5" y="1315.0" />
+      <point x="344.9916666666667" y="1315.0" />
+      <point x="344.9916666666667" y="1305.0" />
+      <point x="283.44821428571413" y="1305.0" />
+      <point x="126.0" y="141.5" />
+    </edge>
+    <edge source="com.github.erotourtes.drawing.editor.ShapesList" target="com.github.erotourtes.drawing.shape.Shape" relationship="TO_MANY">
+      <point x="-87.66666666666669" y="-98.0" />
+      <point x="207.375" y="539.0" />
+      <point x="213.66666666666663" y="539.0" />
+      <point x="213.66666666666663" y="354.0" />
+      <point x="283.5" y="354.0" />
+      <point x="0.0" y="141.5" />
+    </edge>
+    <edge source="com.github.erotourtes.view.ToolBar" target="com.github.erotourtes.styles.ToolbarStyles.Companion" relationship="DEPENDENCY">
+      <point x="15.0" y="-54.0" />
+      <point x="779.0" y="1248.0" />
+      <point x="-105.0" y="-0.0" />
+    </edge>
+    <edge source="com.github.erotourtes.drawing.shape.Shape" target="com.github.erotourtes.drawing.shape.Shape" relationship="DEPENDENCY">
+      <point x="-84.33333333333331" y="141.5" />
+      <point x="199.16666666666669" y="333.0" />
+      <point x="137.0" y="333.0" />
+      <point x="137.0" y="171.5" />
+      <point x="-126.5" y="-0.0" />
+    </edge>
+    <edge source="javafx.beans.property.SimpleObjectProperty" target="javafx.beans.property.SimpleObjectProperty" relationship="DEPENDENCY">
+      <point x="-126.0" y="141.5" />
+      <point x="31.448214285714187" y="1206.0" />
+      <point x="-51.55178571428581" y="1206.0" />
+      <point x="-51.55178571428581" y="1044.5" />
+      <point x="-189.0" y="-0.0" />
+    </edge>
+    <edge source="com.github.erotourtes.view.MainView" target="com.github.erotourtes.drawing.EditorHandler" relationship="TO_ONE">
+      <point x="-119.0" y="-83.5" />
+      <point x="-217.52261904761895" y="1762.0" />
+      <point x="-297.0" y="1762.0" />
+      <point x="-297.0" y="1558.0" />
+      <point x="75.33333333333337" y="1558.0" />
+      <point x="-140.66666666666663" y="83.0" />
+    </edge>
+    <edge source="com.github.erotourtes.drawing.EditorHandler" target="com.github.erotourtes.drawing.editor.Editor" relationship="TO_MANY">
+      <point x="105.5" y="-83.0" />
+      <point x="321.5" y="1315.0" />
+      <point x="344.9916666666667" y="1315.0" />
+      <point x="344.9916666666667" y="1305.0" />
+      <point x="600.9916666666667" y="1305.0" />
+      <point x="0.0" y="228.5" />
+    </edge>
+    <edge source="com.github.erotourtes.drawing.editor.Editor" target="com.github.erotourtes.drawing.shape.Shape" relationship="DEPENDENCY">
+      <point x="86.25" y="-228.5" />
+      <point x="687.2416666666667" y="794.0" />
+      <point x="599.0124999999998" y="794.0" />
+      <point x="599.0124999999998" y="354.0" />
+      <point x="381.66666666666663" y="354.0" />
+      <point x="381.66666666666663" y="344.0" />
+      <point x="367.8333333333333" y="344.0" />
+      <point x="84.33333333333331" y="141.5" />
+    </edge>
+    <edge source="com.github.erotourtes.view.MainView" target="com.github.erotourtes.view.MenuBar" relationship="CREATE">
+      <point x="119.0" y="-83.5" />
+      <point x="20.477380952381054" y="1762.0" />
+      <point x="271.3648809523809" y="1762.0" />
+      <point x="271.3648809523809" y="1742.0" />
+      <point x="379.0" y="1742.0" />
+      <point x="0.0" y="39.0" />
+    </edge>
+    <edge source="com.github.erotourtes.view.ToolBar" target="com.github.erotourtes.drawing.EditorHandler" relationship="DEPENDENCY">
+      <point x="0.0" y="-54.0" />
+      <point x="764.0" y="1558.0" />
+      <point x="356.66666666666663" y="1558.0" />
+      <point x="140.66666666666663" y="83.0" />
+    </edge>
+    <edge source="com.github.erotourtes.view.MainView" target="tornadofx.View" relationship="GENERALIZATION">
+      <point x="0.0" y="-83.5" />
+      <point x="-98.52261904761895" y="1752.0" />
+      <point x="-229.75" y="1752.0" />
+      <point x="-56.75" y="68.0" />
+    </edge>
+    <edge source="com.github.erotourtes.drawing.editor.ShapesList.ShapeIterator" target="com.github.erotourtes.drawing.editor.ShapesList" relationship="INNER_CLASS">
+      <point x="-50.75" y="68.5" />
+      <point x="274.91666666666663" y="539.0" />
+      <point x="295.04166666666663" y="539.0" />
+      <point x="0.0" y="-98.0" />
+    </edge>
+    <edge source="com.github.erotourtes.drawing.editor.Editor" target="com.github.erotourtes.drawing.editor.ShapesList" relationship="TO_ONE">
+      <point x="-86.25" y="-228.5" />
+      <point x="514.7416666666667" y="794.0" />
+      <point x="360.79166666666663" y="794.0" />
+      <point x="65.75" y="98.0" />
+    </edge>
+    <edge source="com.github.erotourtes.drawing.CanvasPane" target="com.github.erotourtes.drawing.CanvasPane" relationship="DEPENDENCY">
+      <point x="-56.25" y="39.0" />
+      <point x="36.75" y="1712.0" />
+      <point x="-39.5" y="1712.0" />
+      <point x="-39.5" y="1653.0" />
+      <point x="-112.5" y="-0.0" />
+    </edge>
+    <edge source="com.github.erotourtes.drawing.EditorHandler" target="com.github.erotourtes.drawing.editor.ShapesList" relationship="CREATE">
+      <point x="-105.5" y="-83.0" />
+      <point x="110.5" y="1315.0" />
+      <point x="150.25" y="1315.0" />
+      <point x="150.25" y="1305.0" />
+      <point x="-62.05178571428581" y="1305.0" />
+      <point x="-62.05178571428581" y="794.0" />
+      <point x="229.29166666666663" y="794.0" />
+      <point x="-65.75" y="98.0" />
+    </edge>
+    <edge source="com.github.erotourtes.drawing.EditorHandler" target="javafx.beans.property.SimpleObjectProperty" relationship="CREATE">
+      <point x="-105.5" y="-83.0" />
+      <point x="110.5" y="1315.0" />
+      <point x="150.25" y="1315.0" />
+      <point x="150.25" y="1305.0" />
+      <point x="157.4482142857142" y="1305.0" />
+      <point x="0.0" y="141.5" />
+    </edge>
+    <edge source="com.github.erotourtes.view.MainView" target="com.github.erotourtes.drawing.CanvasPane" relationship="CREATE">
+      <point x="119.0" y="-83.5" />
+      <point x="20.477380952381054" y="1762.0" />
+      <point x="271.3648809523809" y="1762.0" />
+      <point x="271.3648809523809" y="1742.0" />
+      <point x="149.25" y="1742.0" />
+      <point x="56.25" y="39.0" />
+    </edge>
+    <edge source="com.github.erotourtes.view.MainView" target="com.github.erotourtes.drawing.EditorHandler" relationship="CREATE">
+      <point x="119.0" y="-83.5" />
+      <point x="20.477380952381054" y="1762.0" />
+      <point x="271.3648809523809" y="1762.0" />
+      <point x="271.3648809523809" y="1742.0" />
+      <point x="216.0" y="1742.0" />
+      <point x="0.0" y="83.0" />
+    </edge>
+    <edge source="com.github.erotourtes.drawing.editor.ShapesList" target="com.github.erotourtes.drawing.editor.ShapesList.ShapeIterator" relationship="CREATE">
+      <point x="87.66666666666669" y="-98.0" />
+      <point x="382.70833333333337" y="539.0" />
+      <point x="376.41666666666663" y="539.0" />
+      <point x="50.75" y="68.5" />
+    </edge>
+    <edge source="com.github.erotourtes.drawing.editor.Editor" target="com.github.erotourtes.drawing.editor.Editor" relationship="DEPENDENCY">
+      <point x="-115.0" y="228.5" />
+      <point x="485.9916666666667" y="1305.0" />
+      <point x="408.4916666666667" y="1305.0" />
+      <point x="408.4916666666667" y="1056.5" />
+      <point x="-172.5" y="-0.0" />
+    </edge>
+    <edge source="com.github.erotourtes.view.ToolBar" target="com.github.erotourtes.drawing.editor.Editor" relationship="DEPENDENCY">
+      <point x="0.0" y="-54.0" />
+      <point x="764.0" y="1558.0" />
+      <point x="715.9916666666667" y="1558.0" />
+      <point x="115.0" y="228.5" />
+    </edge>
+    <edge source="com.github.erotourtes.drawing.editor.ShapesList.ShapeIterator" target="com.github.erotourtes.drawing.shape.Shape" relationship="DEPENDENCY">
+      <point x="0.0" y="-68.5" />
+      <point x="325.66666666666663" y="354.0" />
+      <point x="381.66666666666663" y="354.0" />
+      <point x="381.66666666666663" y="344.0" />
+      <point x="367.83333333333326" y="344.0" />
+      <point x="84.33333333333331" y="141.5" />
+    </edge>
+    <edge source="com.github.erotourtes.view.MainView" target="com.github.erotourtes.view.ToolBar" relationship="CREATE">
+      <point x="119.0" y="-83.5" />
+      <point x="20.477380952381054" y="1762.0" />
+      <point x="271.3648809523809" y="1762.0" />
+      <point x="271.3648809523809" y="1742.0" />
+      <point x="764.0" y="1742.0" />
+      <point x="0.0" y="54.0" />
+    </edge>
+    <edge source="com.github.erotourtes.styles.ToolbarStyles.Companion" target="com.github.erotourtes.styles.ToolbarStyles" relationship="INNER_CLASS">
+      <point x="-0.0" y="97.0" />
+      <point x="-0.0" y="-39.0" />
+    </edge>
+    <edge source="com.github.erotourtes.drawing.EditorHandler" target="com.github.erotourtes.drawing.editor.ShapesList" relationship="TO_ONE">
+      <point x="105.5" y="-83.0" />
+      <point x="321.5" y="1315.0" />
+      <point x="344.9916666666667" y="1315.0" />
+      <point x="344.9916666666667" y="1305.0" />
+      <point x="356.94821428571413" y="1305.0" />
+      <point x="356.94821428571413" y="794.0" />
+      <point x="360.79166666666663" y="794.0" />
+      <point x="65.75" y="98.0" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic" zoom="0.79653566298691" showDependencies="true" x="340.96996814293914" y="1108.7422971583044" />
+  <SelectedNodes>
+    <node>com.github.erotourtes.view.MainView</node>
+  </SelectedNodes>
+  <Categories>
+    <Category>Constructors</Category>
+    <Category>Fields</Category>
+    <Category>Inner Classes</Category>
+    <Category>Methods</Category>
+    <Category>Properties</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+
