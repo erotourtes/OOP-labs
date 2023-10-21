@@ -1,21 +1,28 @@
 package com.github.erotourtes.view
 
 import com.github.erotourtes.utils.MenuItemInfo
+import com.github.erotourtes.utils.PopupView
 import com.github.erotourtes.utils.g
 import com.github.erotourtes.utils.n
 import javafx.scene.control.MenuBar
+import javafx.scene.control.MenuItem
+import javafx.stage.StageStyle
 import tornadofx.*
 
 class MenuBar(shapes: List<MenuItemInfo>) : MenuBar() {
     init {
         menu("File") {
-            item("New...")
-            item("Open...")
-            item("Save as...")
+            val invoke: MenuItem.() -> Unit = {
+                action { find<PopupView>(PopupView.ScopeInfo(text)).openModal(StageStyle.UTILITY) }
+            }
+
+            item("New...") { invoke() }
+            item("Open...") { invoke() }
+            item("Save as...") { invoke() }
             separator()
-            item("Print")
+            item("Print") { invoke() }
             separator()
-            item("Exit")
+            item("Exit") { invoke() }
         }
         menu("Objects") {
             shapes.forEach {
