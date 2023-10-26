@@ -8,8 +8,7 @@ import javafx.scene.paint.Color
 class Point(gc: GraphicsContext) : Shape(gc) {
     override fun draw() {
         val radius = 12.0
-        gc.drawOnce {
-            setProperties()
+        gc.apply {
             val (x, y) = dm.getBoundaries().first
             fillOval(x, y, radius, radius)
         }
@@ -18,10 +17,7 @@ class Point(gc: GraphicsContext) : Shape(gc) {
 
 class Line(gc: GraphicsContext) : Shape(gc) {
     override fun draw() {
-        gc.drawOnce {
-            setProperties()
-            strokeLine(dm)
-        }
+        gc.apply { strokeLine(dm) }
     }
 }
 
@@ -31,11 +27,8 @@ class Rect(gc: GraphicsContext) : Shape(gc) {
         colorStroke = Color.BLACK
     }
 
-    override fun setDm(curDm: Dimension) = dm.copyFrom(getToCornerDimension(curDm))
-
     override fun draw() {
-        gc.drawOnce {
-            setProperties()
+        gc.apply {
             fillRect(dm)
             strokeRect(dm)
         }
@@ -49,12 +42,9 @@ class Ellipse(gc: GraphicsContext) : Shape(gc) {
     }
 
     override fun draw() {
-        gc.drawOnce {
-            setProperties();
+        gc.apply {
             fillOval(dm)
             strokeOval(dm)
         }
     }
-
-    override fun setDm(curDm: Dimension) = dm.copyFrom(getToCornerDimension(curDm))
 }

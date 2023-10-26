@@ -1,6 +1,7 @@
 package com.github.erotourtes.drawing.shape
 
 import com.github.erotourtes.utils.Dimension
+import com.github.erotourtes.utils.drawOnce
 import javafx.scene.canvas.GraphicsContext
 import javafx.scene.paint.Color
 import java.lang.RuntimeException
@@ -13,9 +14,16 @@ abstract class Shape(val gc: GraphicsContext) {
 
     abstract fun draw()
 
+    open fun drawWithProperties() {
+        gc.drawOnce {
+            setProperties()
+            draw()
+        }
+    }
+
     open fun setDm(curDm: Dimension) = curDm.copyTo(dm)
 
-    fun setProperties() {
+    private fun setProperties() {
         with(gc) {
             fill = colorFill
             stroke = colorStroke

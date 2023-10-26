@@ -26,28 +26,16 @@ class PointEditor(shapes: ShapesList, gc: GraphicsContext) : Editor(shapes, gc) 
 
 class LineEditor(shapes: ShapesList, gc: GraphicsContext) : Editor(shapes, gc) {
     override val shape = Line(gc)
-
-    override fun previewLine() = gc.drawOnce {
-        setPreviewProperties()
-        strokeLine(dm)
-    }
 }
 
 class RectEditor(shapes: ShapesList, gc: GraphicsContext) : Editor(shapes, gc) {
     override val shape = Rect(gc)
-    override fun previewLine() = gc.drawOnce {
-        setPreviewProperties()
-        strokeRect(getToCornerDimension(dm))
-    }
+    override val processor = DmProcessor { getToCornerDimension(it) }
 }
 
 class EllipseEditor(shapes: ShapesList, gc: GraphicsContext) : Editor(shapes, gc) {
     override val shape = Ellipse(gc)
-    override fun previewLine() = gc.drawOnce {
-        setPreviewProperties()
-        strokeOval(getToCornerDimension(dm))
-        strokeRect(getToCornerDimension(dm))
-    }
+    override val processor: DmProcessor = DmProcessor { getToCornerDimension(it) }
 }
 
 class EmptyEditor(shapes: ShapesList, gc: GraphicsContext) : Editor(shapes, gc) {

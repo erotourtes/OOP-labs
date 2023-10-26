@@ -8,13 +8,14 @@ import javafx.scene.input.MouseEvent
 
 abstract class Editor(protected val shapes: ShapesList, protected val gc: GraphicsContext) {
     protected val dm = Dimension()
+    protected open val processor: DmProcessor = DmProcessor { it }
     protected abstract val shape: Shape
 
     open fun listenToEvents() {
         val c = gc.canvas
-        c.setOnMousePressed(this::onMousePressed)
-        c.setOnMouseDragged(this::onMouseDragged)
-        c.setOnMouseReleased(this::onMouseReleased)
+        c.setOnMousePressed(::onMousePressed)
+        c.setOnMouseDragged(::onMouseDragged)
+        c.setOnMouseReleased(::onMouseReleased)
     }
 
     protected open fun onMousePressed(e: MouseEvent) {
@@ -31,13 +32,13 @@ abstract class Editor(protected val shapes: ShapesList, protected val gc: Graphi
 
     protected open fun onMouseReleased(e: MouseEvent) {
         if (e.isDragDetect) return // returns if mouse was not dragged
-        shape.setDm(dm)
+        shape.setDm(processor.process(dm))
         shapes.add(shape.copy())
         redraw()
     }
 
     private fun drawAll() {
-        for (shape in shapes) shape.draw()
+        for (shape in shapes) shape.drawWithProperties()
     }
 
     private fun clear() = gc.clearRect(0.0, 0.0, gc.canvas.width, gc.canvas.height)
@@ -47,10 +48,17 @@ abstract class Editor(protected val shapes: ShapesList, protected val gc: Graphi
         drawAll()
     }
 
-    abstract fun previewLine()
+    protected open fun previewLine() {
+        gc.drawOnce {
+            setPreviewProperties()
+            shape.setDm(processor.process(dm))
+            shape.draw()
+        }
+    }
 
     protected fun setPreviewProperties() {
         gc.setLineDashes(5.0)
         gc.stroke = Color.BLACK
+        gc.fill = Color.TRANSPARENT
     }
 }
