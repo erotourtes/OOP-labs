@@ -1,11 +1,17 @@
 package com.github.erotourtes.view
 
+import com.github.erotourtes.drawing.EditorHandler
+import com.github.erotourtes.drawing.editor.EllipseEditor
+import com.github.erotourtes.drawing.editor.LineEditor
+import com.github.erotourtes.drawing.editor.PointEditor
+import com.github.erotourtes.drawing.editor.RectEditor
 import com.github.erotourtes.utils.MenuItemInfo
 import com.github.erotourtes.utils.PopupView
 import com.github.erotourtes.utils.g
 import com.github.erotourtes.utils.n
 import javafx.scene.control.MenuBar
 import javafx.scene.control.MenuItem
+import javafx.scene.control.ToggleGroup
 import javafx.stage.StageStyle
 import tornadofx.*
 
@@ -57,6 +63,29 @@ class MenuBar(shapes: List<MenuItemInfo>) : MenuBar() {
                             - в заголовку вікна для (Ж mod 2 = 1) g % 2 = ${g % 2}
                     """.trimIndent()
             )
+        }
+    }
+
+    companion object {
+        fun create(editorHandler: EditorHandler): MenuBar {
+            val group = ToggleGroup()
+            val menuList = listOf(
+                MenuItemInfo("Dot", PointEditor::class.java),
+                MenuItemInfo("Line", LineEditor::class.java),
+                MenuItemInfo("Rectangle", RectEditor::class.java),
+                MenuItemInfo("Ellipse", EllipseEditor::class.java),
+            )
+
+            menuList.forEach { it.group = group; it.action = { editorHandler.useEditor(it.kotlinClass) } }
+
+            editorHandler.listenToChanges { _, _, newValue ->
+                group.toggles.forEach {
+                    val userData = it.userData as MenuItemInfo
+                    it.isSelected = userData.kotlinClass == newValue.javaClass
+                }
+            }
+
+            return MenuBar(menuList)
         }
     }
 }
