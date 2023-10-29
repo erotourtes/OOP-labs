@@ -1,18 +1,17 @@
 package com.github.erotourtes.view
 
 import com.github.erotourtes.drawing.CanvasPane
-import com.github.erotourtes.drawing.EditorHandler
 import javafx.scene.canvas.Canvas
 import tornadofx.*
 
 class MainView : View("Lab3") {
     private val canvas = Canvas()
-    private val editorHandler = EditorHandler(canvas)
+    private val ctrl: MainController by inject(MainController.ScopeInfo(canvas))
 
     override val root = borderpane {
-        top = MenuBar.create(editorHandler)
+        top = MenuBar.create(ctrl.editorHandler, ctrl.shapesInfo)
         center = borderpane {
-            top = ToolBar.create(editorHandler)
+            top = ToolBar.create(ctrl.editorHandler, ctrl.shapesInfo)
             center = CanvasPane(canvas)
         }
     }

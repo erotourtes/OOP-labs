@@ -1,8 +1,8 @@
 package com.github.erotourtes.drawing
 
-import com.github.erotourtes.utils.n
 import com.github.erotourtes.drawing.editor.Editor
 import com.github.erotourtes.drawing.editor.ShapesList
+import com.github.erotourtes.utils.n
 import javafx.beans.property.SimpleObjectProperty
 import javafx.beans.value.ChangeListener
 import javafx.scene.canvas.Canvas

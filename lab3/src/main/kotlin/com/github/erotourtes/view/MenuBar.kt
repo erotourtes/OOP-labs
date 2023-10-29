@@ -1,21 +1,16 @@
 package com.github.erotourtes.view
 
 import com.github.erotourtes.drawing.EditorHandler
-import com.github.erotourtes.drawing.editor.EllipseEditor
-import com.github.erotourtes.drawing.editor.LineEditor
-import com.github.erotourtes.drawing.editor.PointEditor
-import com.github.erotourtes.drawing.editor.RectEditor
-import com.github.erotourtes.utils.MenuItemInfo
 import com.github.erotourtes.utils.PopupView
+import com.github.erotourtes.utils.ShapeInfo
 import com.github.erotourtes.utils.g
 import com.github.erotourtes.utils.n
+import javafx.scene.control.*
 import javafx.scene.control.MenuBar
-import javafx.scene.control.MenuItem
-import javafx.scene.control.ToggleGroup
 import javafx.stage.StageStyle
 import tornadofx.*
 
-class MenuBar(shapes: List<MenuItemInfo>) : MenuBar() {
+class MenuBar(vararg menu: Menu) : MenuBar() {
     init {
         menu("File") {
             val invoke: MenuItem.() -> Unit = {
@@ -30,15 +25,9 @@ class MenuBar(shapes: List<MenuItemInfo>) : MenuBar() {
             separator()
             item("Exit") { invoke() }
         }
-        menu("Objects") {
-            shapes.forEach {
-                radiomenuitem(it.name, it.group) {
-                    action(it.action)
-                    isSelected = false
-                    userData = it
-                }
-            }
-        }
+
+        menus.addAll(menu)
+
         menu("Help") {
             item(
                 """
@@ -67,25 +56,28 @@ class MenuBar(shapes: List<MenuItemInfo>) : MenuBar() {
     }
 
     companion object {
-        fun create(editorHandler: EditorHandler): MenuBar {
+        fun create(editorHandler: EditorHandler, list: List<ShapeInfo>): MenuBar {
             val group = ToggleGroup()
-            val menuList = listOf(
-                MenuItemInfo("Dot", PointEditor::class.java),
-                MenuItemInfo("Line", LineEditor::class.java),
-                MenuItemInfo("Rectangle", RectEditor::class.java),
-                MenuItemInfo("Ellipse", EllipseEditor::class.java),
-            )
-
-            menuList.forEach { it.group = group; it.action = { editorHandler.useEditor(it.kotlinClass) } }
 
             editorHandler.listenToChanges { _, _, newValue ->
                 group.toggles.forEach {
-                    val userData = it.userData as MenuItemInfo
+                    val userData = it.userData as ShapeInfo
                     it.isSelected = userData.kotlinClass == newValue.javaClass
                 }
             }
 
-            return MenuBar(menuList)
+            val objectsUI = list.map {
+                RadioMenuItem(it.name).apply {
+                    action { editorHandler.useEditor(it.kotlinClass) }
+                    toggleGroup = group
+                    isSelected = false
+                    userData = it
+                }
+            }
+
+            val menu = Menu("Objects").apply { items.addAll(objectsUI) }
+
+            return com.github.erotourtes.view.MenuBar(menu)
         }
     }
 }
