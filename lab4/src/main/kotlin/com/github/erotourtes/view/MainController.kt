@@ -13,6 +13,7 @@ class MainController : Controller() {
         ShapeInfo("Line", "Line", LineEditor::class.java, FontAwesomeIcon.MINUS),
         ShapeInfo("Rectangle", "Rectangle", RectEditor::class.java, FontAwesomeIcon.SQUARE),
         ShapeInfo("Ellipse", "Ellipse", EllipseEditor::class.java, FontAwesomeIcon.CIRCLE_ALT),
+        ShapeInfo("Dumbbell", "Dumbbell", DumbbellEditor::class.java, FontAwesomeIcon.MARS),
     )
 
     val editorHandler: EditorHandler

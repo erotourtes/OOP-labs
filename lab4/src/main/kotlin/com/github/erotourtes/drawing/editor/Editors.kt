@@ -1,7 +1,7 @@
 package com.github.erotourtes.drawing.editor
 
 import com.github.erotourtes.drawing.shape.*
-import com.github.erotourtes.utils.*
+import com.github.erotourtes.utils.getToCornerDimension
 import javafx.scene.canvas.GraphicsContext
 import javafx.scene.input.MouseEvent
 
@@ -47,4 +47,8 @@ class EmptyEditor(shapes: ShapesList, gc: GraphicsContext) : Editor(shapes, gc) 
     override fun onMousePressed(e: MouseEvent) {}
     override fun onMouseReleased(e: MouseEvent) {}
     override fun previewLine() {}
+}
+
+class DumbbellEditor(shapes: ShapesList, gc: GraphicsContext) : Editor(shapes, gc) {
+    override val shape = Dumbbell(gc)
 }

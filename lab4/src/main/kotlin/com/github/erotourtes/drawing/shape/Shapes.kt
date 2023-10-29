@@ -48,3 +48,21 @@ class Ellipse(gc: GraphicsContext) : Shape(gc) {
         }
     }
 }
+
+class Dumbbell(gc: GraphicsContext) : Shape(gc) {
+    // TODO: make it work as with alt in Photoshop
+    override fun draw() {
+        gc.apply {
+            val radius = 24.0
+            val (start, end) = dm.getRaw()
+
+            fillOval(start.x - radius / 2, start.y - radius / 2, radius, radius)
+            fillOval(end.x - radius / 2, end.y - radius / 2, radius, radius)
+
+            strokeOval(start.x - radius / 2, start.y - radius / 2, radius, radius)
+            strokeOval(end.x - radius / 2, end.y - radius / 2, radius, radius)
+
+            strokeLine(dm)
+        }
+    }
+}
