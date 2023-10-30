@@ -3,6 +3,8 @@ package com.github.erotourtes.drawing.shape
 import com.github.erotourtes.utils.*
 import javafx.scene.canvas.GraphicsContext
 import javafx.scene.paint.Color
+import kotlin.math.abs
+import kotlin.math.cos
 
 
 class Point(gc: GraphicsContext) : Shape(gc) {
@@ -50,7 +52,6 @@ class Ellipse(gc: GraphicsContext) : Shape(gc) {
 }
 
 class Dumbbell(gc: GraphicsContext) : Shape(gc) {
-    // TODO: make it work as with alt in Photoshop
     override fun draw() {
         gc.apply {
             val radius = 24.0
@@ -63,6 +64,32 @@ class Dumbbell(gc: GraphicsContext) : Shape(gc) {
             strokeOval(end.x - radius / 2, end.y - radius / 2, radius, radius)
 
             strokeLine(dm)
+        }
+    }
+}
+
+class Cube(gc: GraphicsContext) : Shape(gc) {
+    override fun draw() {
+        gc.apply {
+            val (s, e) = dm.getRaw()
+            val w = e.x - s.x
+            val h = e.y - s.y
+
+            val depthFactor = 0.5
+            val size = abs(w.coerceAtLeast(h))
+            val depthX = w * depthFactor
+            val depthY = h * depthFactor
+
+            val bgX = s.x + depthX
+            val bgY = s.y - depthY
+
+            strokeRect(s.x, s.y, size, size)
+            strokeRect(bgX, bgY, size, size)
+
+            strokeLine(s.x, s.y, bgX, bgY)
+            strokeLine(s.x, s.y + size, bgX, bgY + size)
+            strokeLine(s.x + size, s.y, bgX + size, bgY)
+            strokeLine(s.x + size, s.y + size, bgX + size, bgY + size)
         }
     }
 }

@@ -52,3 +52,7 @@ class EmptyEditor(shapes: ShapesList, gc: GraphicsContext) : Editor(shapes, gc) 
 class DumbbellEditor(shapes: ShapesList, gc: GraphicsContext) : Editor(shapes, gc) {
     override val shape = Dumbbell(gc)
 }
+
+class CubeEditor(shapes: ShapesList, gc: GraphicsContext) : Editor(shapes, gc) {
+    override val shape = Cube(gc)
+}
