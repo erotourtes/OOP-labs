@@ -51,4 +51,19 @@ class Dimension {
     data class Point(val x: Double, val y: Double)
 
     override fun toString(): String = "Dimension(x1=$x1, y1=$y1, x2=$x2, y2=$y2)"
+
+    companion object {
+        fun toCorner(dm: Dimension): Dimension {
+            val (c, end) = dm.getRaw()
+
+            // it is not width, it is half of the width; can be negative
+            val w = end.x - c.x
+            val h = end.y - c.y
+
+            val sX = c.x - w
+            val sY = c.y - h
+
+            return Dimension().setStart(end.x, end.y).setEnd(sX, sY)
+        }
+    }
 }

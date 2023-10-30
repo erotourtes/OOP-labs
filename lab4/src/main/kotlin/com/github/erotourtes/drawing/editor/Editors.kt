@@ -1,7 +1,7 @@
 package com.github.erotourtes.drawing.editor
 
 import com.github.erotourtes.drawing.shape.*
-import com.github.erotourtes.utils.getToCornerDimension
+import com.github.erotourtes.utils.Dimension
 import javafx.scene.canvas.GraphicsContext
 import javafx.scene.input.MouseEvent
 
@@ -30,12 +30,12 @@ class LineEditor(shapes: ShapesList, gc: GraphicsContext) : Editor(shapes, gc) {
 
 class RectEditor(shapes: ShapesList, gc: GraphicsContext) : Editor(shapes, gc) {
     override val shape = Rect(gc)
-    override val processor = DmProcessor { getToCornerDimension(it) }
+    override val processor = DmProcessor { Dimension.toCorner(it) }
 }
 
 class EllipseEditor(shapes: ShapesList, gc: GraphicsContext) : Editor(shapes, gc) {
     override val shape = Ellipse(gc)
-    override val processor: DmProcessor = DmProcessor { getToCornerDimension(it) }
+    override val processor: DmProcessor = DmProcessor { Dimension.toCorner(it) }
 }
 
 class EmptyEditor(shapes: ShapesList, gc: GraphicsContext) : Editor(shapes, gc) {
