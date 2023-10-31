@@ -4,8 +4,6 @@ import com.github.erotourtes.utils.*
 import javafx.scene.canvas.GraphicsContext
 import javafx.scene.paint.Color
 import kotlin.math.abs
-import kotlin.math.cos
-
 
 class Point(gc: GraphicsContext) : Shape(gc) {
     override fun draw() {
@@ -68,7 +66,8 @@ class Dumbbell(gc: GraphicsContext) : Shape(gc) {
     }
 }
 
-class Cube(gc: GraphicsContext) : Shape(gc) {
+class CubeEx(gc: GraphicsContext) : Shape(gc) {
+    // failed math but got a nice effect
     override fun draw() {
         gc.apply {
             val (s, e) = dm.getRaw()
@@ -90,6 +89,35 @@ class Cube(gc: GraphicsContext) : Shape(gc) {
             strokeLine(s.x, s.y + size, bgX, bgY + size)
             strokeLine(s.x + size, s.y, bgX + size, bgY)
             strokeLine(s.x + size, s.y + size, bgX + size, bgY + size)
+        }
+    }
+}
+
+class Cube(gc: GraphicsContext) : Shape(gc) {
+    override fun draw() {
+        gc.apply {
+            var (s, e) = dm.getRaw()
+            val w = e.x - s.x
+            val h = e.y - s.y
+
+            val depthFactor = 0.5
+            val sizeX = abs(w)
+            val sizeY = abs(h)
+            val depthX = w * depthFactor
+            val depthY = h * depthFactor
+
+            s = dm.getBoundaries().first
+
+            val bgX = s.x + depthX
+            val bgY = s.y - depthY
+
+            strokeRect(s.x, s.y, sizeX, sizeY)
+            strokeRect(bgX, bgY, sizeX, sizeY)
+
+            strokeLine(s.x, s.y, bgX, bgY)
+            strokeLine(s.x + sizeX, s.y, bgX + sizeX, bgY)
+            strokeLine(s.x, s.y + sizeY, bgX, bgY + sizeY)
+            strokeLine(s.x + sizeX, s.y + sizeY, bgX + sizeX, bgY + sizeY)
         }
     }
 }
