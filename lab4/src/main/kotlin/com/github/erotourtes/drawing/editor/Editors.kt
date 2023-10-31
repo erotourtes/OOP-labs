@@ -30,12 +30,10 @@ class LineEditor(shapes: ShapesList, gc: GraphicsContext) : Editor(shapes, gc) {
 
 class RectEditor(shapes: ShapesList, gc: GraphicsContext) : Editor(shapes, gc) {
     override val shape = Rect(gc)
-    override val processor = DmProcessor { Dimension.toCorner(it) }
 }
 
 class EllipseEditor(shapes: ShapesList, gc: GraphicsContext) : Editor(shapes, gc) {
     override val shape = Ellipse(gc)
-    override val processor: DmProcessor = DmProcessor { Dimension.toCorner(it) }
 }
 
 class EmptyEditor(shapes: ShapesList, gc: GraphicsContext) : Editor(shapes, gc) {
