@@ -2,27 +2,27 @@ package com.github.erotourtes.drawing
 
 import com.github.erotourtes.drawing.editor.Editor
 import com.github.erotourtes.drawing.editor.ShapesList
+import com.github.erotourtes.utils.EditorFactory
 import com.github.erotourtes.utils.n
 import javafx.beans.property.SimpleObjectProperty
 import javafx.beans.value.ChangeListener
 import javafx.scene.canvas.Canvas
-import javafx.scene.canvas.GraphicsContext
 
-class EditorHandler(private val canvas: Canvas) {
+class EditorHandler(private val factories: Map<String, EditorFactory>, private val canvas: Canvas) {
     private val shapes = ShapesList(n)
-    private var map: MutableMap<Class<out Editor>, Editor> = mutableMapOf()
-    private val curEditor = SimpleObjectProperty<Editor>()
+    private var editors: MutableMap<String, Editor> = mutableMapOf()
+    private val curEditor = SimpleObjectProperty<String>()
 
-    fun useEditor(editorClass: Class<out Editor>) {
-        val editor = getOrCreateEditor(editorClass)
+    fun useEditor(editorName: String) {
+        val editor = getOrCreateEditor(editorName)
         editor.listenToEvents()
-        curEditor.set(editor)
+        curEditor.set(editorName)
     }
 
-    fun listenToChanges(subscriber: ChangeListener<Editor>) = curEditor.addListener(subscriber)
+    fun listenToChanges(subscriber: ChangeListener<String>) = curEditor.addListener(subscriber)
 
-    private fun getOrCreateEditor(editorClass: Class<out Editor>): Editor = map.getOrPut(editorClass) {
-        editorClass.getConstructor(ShapesList::class.java, GraphicsContext::class.java)
-            .newInstance(shapes, canvas.graphicsContext2D)
+    private fun getOrCreateEditor(editorName: String): Editor = editors.getOrPut(editorName) {
+        factories[editorName]?.create(shapes, canvas.graphicsContext2D)
+            ?: throw Exception("Editor with name $editorName is not found")
     }
 }

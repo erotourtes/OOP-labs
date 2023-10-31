@@ -9,10 +9,8 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d1beba19-492e-4df0-8bce-e71a862c743f" name="Default" comment="lab4: removed unnecessary kotlin version declaration">
+    <list default="true" id="d1beba19-492e-4df0-8bce-e71a862c743f" name="Default" comment="lab4: moved from reflection to factory interface">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/github/erotourtes/drawing/editor/Editors.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/github/erotourtes/drawing/editor/Editors.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/github/erotourtes/drawing/shape/Shapes.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/github/erotourtes/drawing/shape/Shapes.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/com/github/erotourtes/view/MainController.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/com/github/erotourtes/view/MainController.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -179,7 +177,7 @@
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/sirmax/Files/Documents/projects/kotlin/oop-labs-creating-last-step/lab4&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/sirmax/Files/Documents/projects/kotlin/oop-labs-creating-last-step/lab4/report&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -188,7 +186,7 @@
     &quot;project.structure.last.edited&quot;: &quot;SDKs&quot;,
     &quot;project.structure.proportion&quot;: &quot;0.17&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.38362464&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;vcs.Git&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settings.ide.settings.uml&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
@@ -371,7 +369,9 @@
       <workItem from="1698667845738" duration="1498000" />
       <workItem from="1698669769405" duration="200000" />
       <workItem from="1698670069436" duration="4901000" />
-      <workItem from="1698730238194" duration="375000" />
+      <workItem from="1698730238194" duration="10421000" />
+      <workItem from="1698744830230" duration="2031000" />
+      <workItem from="1698755909213" duration="2977000" />
     </task>
     <task id="LOCAL-00001" summary="lab4: moved toCorner function to Dimension class">
       <option name="closed" value="true" />
@@ -397,7 +397,31 @@
       <option name="project" value="LOCAL" />
       <updated>1698675304516</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="lab4: added Cube and CubeEx shapes">
+      <option name="closed" value="true" />
+      <created>1698730703902</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1698730703902</updated>
+    </task>
+    <task id="LOCAL-00005" summary="lab4: moved from reflection to factory interface">
+      <option name="closed" value="true" />
+      <created>1698759936494</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1698759936494</updated>
+    </task>
+    <task id="LOCAL-00006" summary="lab4: moved from reflection to factory interface">
+      <option name="closed" value="true" />
+      <created>1698759993695</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1698759993695</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
@@ -468,7 +492,13 @@
     <MESSAGE value="lab4: moved toCorner function to Dimension class" />
     <MESSAGE value="lab4: added cube shape" />
     <MESSAGE value="lab4: removed unnecessary kotlin version declaration" />
-    <option name="LAST_COMMIT_MESSAGE" value="lab4: removed unnecessary kotlin version declaration" />
+    <MESSAGE value="lab4: added Cube and CubeEx shapes" />
+    <MESSAGE value="lab4: moved from reflection to factory interface" />
+    <option name="LAST_COMMIT_MESSAGE" value="lab4: moved from reflection to factory interface" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
   </component>
   <component name="antWorkspaceConfiguration">
     <option name="IS_AUTOSCROLL_TO_SOURCE" value="false" />

@@ -2,7 +2,7 @@ package com.github.erotourtes.view
 
 import com.github.erotourtes.drawing.EditorHandler
 import com.github.erotourtes.utils.PopupView
-import com.github.erotourtes.utils.ShapeInfo
+import com.github.erotourtes.utils.EditorInfo
 import com.github.erotourtes.utils.g
 import com.github.erotourtes.utils.n
 import javafx.scene.control.*
@@ -56,19 +56,19 @@ class MenuBar(vararg menu: Menu) : MenuBar() {
     }
 
     companion object {
-        fun create(editorHandler: EditorHandler, list: List<ShapeInfo>): MenuBar {
+        fun create(editorHandler: EditorHandler, list: List<EditorInfo>): MenuBar {
             val group = ToggleGroup()
 
             editorHandler.listenToChanges { _, _, newValue ->
                 group.toggles.forEach {
-                    val userData = it.userData as ShapeInfo
-                    it.isSelected = userData.kotlinClass == newValue.javaClass
+                    val userData = it.userData as EditorInfo
+                    it.isSelected = userData.name == newValue
                 }
             }
 
             val objectsUI = list.map {
                 RadioMenuItem(it.name).apply {
-                    action { editorHandler.useEditor(it.kotlinClass) }
+                    action { editorHandler.useEditor(it.name) }
                     toggleGroup = group
                     isSelected = false
                     userData = it

@@ -9,9 +9,9 @@ class MainView : View("Lab3") {
     private val ctrl: MainController by inject(MainController.ScopeInfo(canvas))
 
     override val root = borderpane {
-        top = MenuBar.create(ctrl.editorHandler, ctrl.shapesInfo)
+        top = MenuBar.create(ctrl.editorHandler, ctrl.editorsInfo)
         center = borderpane {
-            top = ToolBar.create(ctrl.editorHandler, ctrl.shapesInfo)
+            top = ToolBar.create(ctrl.editorHandler, ctrl.editorsInfo)
             center = CanvasPane(canvas)
         }
     }
