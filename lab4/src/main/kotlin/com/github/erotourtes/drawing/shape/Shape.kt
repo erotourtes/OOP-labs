@@ -14,6 +14,8 @@ abstract class Shape(val gc: GraphicsContext) {
 
     abstract fun draw()
 
+    open fun draw(dm: Dimension) = setDm(dm).draw()
+
     open fun drawWithProperties() {
         gc.drawOnce {
             setProperties()
@@ -21,7 +23,7 @@ abstract class Shape(val gc: GraphicsContext) {
         }
     }
 
-    open fun setDm(curDm: Dimension) = curDm.copyTo(dm)
+    open fun setDm(curDm: Dimension) = curDm.copyTo(dm).let { this }
 
     private fun setProperties() {
         with(gc) {

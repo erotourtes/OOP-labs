@@ -36,15 +36,13 @@ class Dimension {
 
     fun getBoundaries(): Pair<Point, Point> {
         return Pair(
-            Point(x1.coerceAtMost(x2), y1.coerceAtMost(y2)),
-            Point(x1.coerceAtLeast(x2), y1.coerceAtLeast(y2))
+            Point(x1.coerceAtMost(x2), y1.coerceAtMost(y2)), Point(x1.coerceAtLeast(x2), y1.coerceAtLeast(y2))
         )
     }
 
     fun getRaw(): Pair<Point, Point> {
         return Pair(
-            Point(x1, y1),
-            Point(x2, y2)
+            Point(x1, y1), Point(x2, y2)
         )
     }
 
@@ -76,5 +74,8 @@ class Dimension {
 
             return Dimension().setStart(s.x, s.y).setEnd(s.x + normalizedX, s.y + normalizedY)
         }
+
+        fun from(x1: Double, y1: Double, x2: Double, y2: Double): Dimension =
+            Dimension().setStart(x1, y1).setEnd(x2, y2)
     }
 }

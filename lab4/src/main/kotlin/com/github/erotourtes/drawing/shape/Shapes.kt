@@ -50,18 +50,22 @@ class Ellipse(gc: GraphicsContext) : Shape(gc) {
 }
 
 class Dumbbell(gc: GraphicsContext) : Shape(gc) {
+    private val line = Line(gc)
+    private val ellipse = Ellipse(gc)
+
     override fun draw() {
         gc.apply {
             val radius = 24.0
+            val hr = radius / 2
             val (start, end) = dm.getRaw()
 
-            fillOval(start.x - radius / 2, start.y - radius / 2, radius, radius)
-            fillOval(end.x - radius / 2, end.y - radius / 2, radius, radius)
+            with(ellipse) {
+                val d = Dimension
+                draw(d.from(start.x - hr, start.y - hr, start.x + hr, start.y + hr))
+                draw(d.from(end.x - hr, end.y - hr, end.x + hr, end.y + hr))
+            }
 
-            strokeOval(start.x - radius / 2, start.y - radius / 2, radius, radius)
-            strokeOval(end.x - radius / 2, end.y - radius / 2, radius, radius)
-
-            strokeLine(dm)
+            line.draw(dm)
         }
     }
 }
@@ -94,6 +98,13 @@ class CubeEx(gc: GraphicsContext) : Shape(gc) {
 }
 
 class Cube(gc: GraphicsContext) : Shape(gc) {
+    private val square = Rect(gc)
+    private val line = Line(gc)
+
+    init {
+        colorFill = Color.TRANSPARENT
+    }
+
     override fun draw() {
         gc.apply {
             var (s, e) = dm.getRaw()
@@ -111,13 +122,19 @@ class Cube(gc: GraphicsContext) : Shape(gc) {
             val bgX = s.x + depthX
             val bgY = s.y - depthY
 
-            strokeRect(s.x, s.y, sizeX, sizeY)
-            strokeRect(bgX, bgY, sizeX, sizeY)
+            val d = Dimension
 
-            strokeLine(s.x, s.y, bgX, bgY)
-            strokeLine(s.x + sizeX, s.y, bgX + sizeX, bgY)
-            strokeLine(s.x, s.y + sizeY, bgX, bgY + sizeY)
-            strokeLine(s.x + sizeX, s.y + sizeY, bgX + sizeX, bgY + sizeY)
+            with(square) {
+                draw(d.from(s.x, s.y, s.x + sizeX, s.y + sizeY))
+                draw(d.from(bgX, bgY, bgX + sizeX, bgY + sizeY))
+            }
+
+            with(line) {
+                draw(d.from(s.x, s.y, bgX, bgY))
+                draw(d.from(s.x + sizeX, s.y, bgX + sizeX, bgY))
+                draw(d.from(s.x, s.y + sizeY, bgX, bgY + sizeY))
+                draw(d.from(s.x + sizeX, s.y + sizeY, bgX + sizeX, bgY + sizeY))
+            }
         }
     }
 }
