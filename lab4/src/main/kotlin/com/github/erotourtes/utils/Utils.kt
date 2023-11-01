@@ -1,5 +1,6 @@
 package com.github.erotourtes.utils
 
+import com.github.erotourtes.drawing.editor.DmProcessor
 import com.github.erotourtes.drawing.editor.Editor
 import com.github.erotourtes.drawing.editor.ShapesList
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon
@@ -31,4 +32,8 @@ class PopupView : Fragment("Mode selection check") {
     }
 
     data class ScopeInfo(val name: String) : Scope()
+}
+
+fun pipe(vararg processors: DmProcessor): DmProcessor = DmProcessor { dm ->
+    processors.fold(dm) { acc, processor -> processor.process(acc) }
 }

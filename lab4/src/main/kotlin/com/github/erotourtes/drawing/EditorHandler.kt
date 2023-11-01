@@ -14,6 +14,8 @@ class EditorHandler(private val factories: Map<String, EditorFactory>, private v
     private val curEditor = SimpleObjectProperty<String>()
 
     fun useEditor(editorName: String) {
+        editors[curEditor.get()]?.disableEvents()
+
         val editor = getOrCreateEditor(editorName)
         editor.listenToEvents()
         curEditor.set(editorName)
