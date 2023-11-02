@@ -1,18 +1,20 @@
 package com.github.erotourtes.view
 
-import com.github.erotourtes.drawing.CanvasPane
-import javafx.scene.canvas.Canvas
 import tornadofx.*
 
-class MainView : View("Lab3") {
-    private val canvas = Canvas()
-    private val ctrl: MainController by inject(MainController.ScopeInfo(canvas))
+class MainView : View("Lab4") {
+    override val scope = MyScope()
+    private val ctrl: MainController by inject(scope)
 
     override val root = borderpane {
-        top = MenuBar.create(ctrl.editorHandler, ctrl.editorsInfo)
+        ctrl.populate()
+//  val model = scope.canvasModel // has no effect, because it's not the same scope
+//  val model = find<CanvasModel>(scope)
+
+        top = find<MyMenu>(scope).root
         center = borderpane {
-            top = ToolBar.create(ctrl.editorHandler, ctrl.editorsInfo)
-            center = CanvasPane(canvas)
+            top = find<ToolBar>(scope).root
+            center = pane { ctrl.bindCanvas(this) }
         }
     }
 }

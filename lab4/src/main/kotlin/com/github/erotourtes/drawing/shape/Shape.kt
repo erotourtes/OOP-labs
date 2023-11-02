@@ -43,4 +43,11 @@ abstract class Shape(val gc: GraphicsContext) {
             throw RuntimeException("Can't copy a shape")
         }
     }
+
+    fun getState(): ShapeState = ShapeState(
+        this::class.java.name,
+        dm.copy(),
+        colorFill,
+        colorStroke,
+    )
 }

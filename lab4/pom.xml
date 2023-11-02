@@ -12,6 +12,7 @@
     <properties>
         <kotlin.version>1.9.20-RC2</kotlin.version>
         <tornadofx.version>1.7.20</tornadofx.version>
+        <serialization.version>1.6.0</serialization.version>
     </properties>
 
     <dependencies>
@@ -24,6 +25,16 @@
             <groupId>de.jensd</groupId>
             <artifactId>fontawesomefx</artifactId>
             <version>8.9</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-maven-serialization</artifactId>
+            <version>${kotlin.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlinx</groupId>
+            <artifactId>kotlinx-serialization-json</artifactId>
+            <version>${serialization.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>

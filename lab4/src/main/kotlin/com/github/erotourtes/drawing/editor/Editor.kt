@@ -83,7 +83,7 @@ abstract class Editor(protected val shapes: ShapesList, protected val gc: Graphi
 
     private fun clear() = gc.clearRect(0.0, 0.0, gc.canvas.width, gc.canvas.height)
 
-    protected fun redraw() {
+    fun redraw() {
         clear()
         drawAll()
     }

@@ -1,5 +1,12 @@
 package com.github.erotourtes.utils
 
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 import kotlin.math.abs
 
 class Dimension {
@@ -33,6 +40,8 @@ class Dimension {
     }
 
     fun copyFrom(src: Dimension) = src.copyTo(this)
+
+    fun copy(): Dimension = Dimension().apply { copyFrom(this@Dimension) }
 
     fun getBoundaries(): Pair<Point, Point> {
         return Pair(

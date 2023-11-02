@@ -22,18 +22,6 @@ data class EditorInfo(
 const val g = 22 + 1
 const val n = 100 + g
 
-class PopupView : Fragment("Mode selection check") {
-    private val action = super.scope as ScopeInfo
-
-    override val root = vbox {
-        style { prefWidth = 250.px }
-        label("You clicked on ${action.name}")
-        button("Close").action { close() }
-    }
-
-    data class ScopeInfo(val name: String) : Scope()
-}
-
 fun pipe(vararg processors: DmProcessor): DmProcessor = DmProcessor { dm ->
     processors.fold(dm) { acc, processor -> processor.process(acc) }
 }

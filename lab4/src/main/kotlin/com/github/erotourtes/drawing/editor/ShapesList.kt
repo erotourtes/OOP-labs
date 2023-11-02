@@ -14,6 +14,12 @@ class ShapesList(n: Int) : Iterable<Shape> {
         shapeArr[shapeIndex++] = sh
     }
 
+    fun clear() {
+        shapeIndex = 0
+    }
+
+    fun getList(): List<Shape> = shapeArr.copyOfRange(0, shapeIndex).filterNotNull()
+
     override fun iterator(): Iterator<Shape> = ShapeIterator()
 
     inner class ShapeIterator : Iterator<Shape> {

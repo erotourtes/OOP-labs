@@ -8,8 +8,7 @@ import javafx.beans.property.SimpleObjectProperty
 import javafx.beans.value.ChangeListener
 import javafx.scene.canvas.Canvas
 
-class EditorHandler(private val factories: Map<String, EditorFactory>, private val canvas: Canvas) {
-    private val shapes = ShapesList(n)
+class EditorHandler(private val shapes: ShapesList, private val factories: Map<String, EditorFactory>, private val canvas: Canvas) {
     private var editors: MutableMap<String, Editor> = mutableMapOf()
     private val curEditor = SimpleObjectProperty<String>()
 
@@ -20,6 +19,8 @@ class EditorHandler(private val factories: Map<String, EditorFactory>, private v
         editor.listenToEvents()
         curEditor.set(editorName)
     }
+
+    fun getEditor() = editors[curEditor.get()] ?: throw Exception("Editor is not found")
 
     fun listenToChanges(subscriber: ChangeListener<String>) = curEditor.addListener(subscriber)
 
