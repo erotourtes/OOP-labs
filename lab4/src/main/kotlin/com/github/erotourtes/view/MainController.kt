@@ -33,6 +33,7 @@ class MainController : Controller() {
         }
 
         val editorHandler = EditorHandler(shapes, factories, canvas)
+            .apply { useEditor(EmptyEditor::class.java.name) }
         cm.item = CanvasData(canvas, shapes, editorsInfo, editorHandler)
     }
 
