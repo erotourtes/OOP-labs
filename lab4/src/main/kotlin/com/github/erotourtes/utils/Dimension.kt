@@ -78,8 +78,10 @@ class Dimension {
             val w = e.x - s.x
             val h = e.y - s.y
             val size = abs(w).coerceAtLeast(abs(h))
-            val normalizedX = w / abs(if (w == 0.0) 1.0 else w) * size
-            val normalizedY = h / abs(if (h == 0.0) 1.0 else h) * size
+            val safeW = if (w == 0.0) 1.0 else w
+            val safeH = if (h == 0.0) 1.0 else h
+            val normalizedX = safeW / abs(safeW) * size
+            val normalizedY = safeH / abs(safeH) * size
 
             return Dimension().setStart(s.x, s.y).setEnd(s.x + normalizedX, s.y + normalizedY)
         }
