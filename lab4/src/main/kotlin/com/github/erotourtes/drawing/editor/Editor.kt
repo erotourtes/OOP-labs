@@ -1,13 +1,20 @@
 package com.github.erotourtes.drawing.editor
 
+import com.github.erotourtes.drawing.history.AddItemCommand
+import com.github.erotourtes.drawing.history.History
 import com.github.erotourtes.drawing.shape.*
 import javafx.scene.paint.Color
 import com.github.erotourtes.utils.*
+import javafx.collections.ListChangeListener
 import javafx.scene.canvas.GraphicsContext
 import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseEvent
 
-abstract class Editor(protected val shapes: ShapesList, protected val gc: GraphicsContext) {
+abstract class Editor(
+    protected val shapes: ShapesList,
+    protected val gc: GraphicsContext,
+    protected val history: History,
+) {
     protected val dm = Dimension()
 
     protected open var curProcessor: DmProcessor = DmProcessor { it }
@@ -15,6 +22,8 @@ abstract class Editor(protected val shapes: ShapesList, protected val gc: Graphi
     protected open val altProcessor: DmProcessor = DmProcessor { Dimension.toCorner(it) }
     protected open val ctrlProcessor: DmProcessor = DmProcessor { Dimension.toEqual(it) }
     protected abstract val shape: Shape
+
+    protected open val shapesChangeListener = ListChangeListener<Shape> { redraw() }
 
     private var isStillDrawing = false
 
@@ -27,6 +36,7 @@ abstract class Editor(protected val shapes: ShapesList, protected val gc: Graphi
         c.setOnMouseReleased(::onMouseReleased)
         c.setOnKeyPressed(::onKeyPressed)
         c.setOnKeyReleased(::onKeyReleased)
+        shapes.addListener(shapesChangeListener)
     }
 
     open fun disableEvents() {
@@ -37,6 +47,7 @@ abstract class Editor(protected val shapes: ShapesList, protected val gc: Graphi
             onKeyPressed = null
             onKeyReleased = null
         }
+        shapes.removeListener(shapesChangeListener)
     }
 
     protected open fun onMousePressed(e: MouseEvent) {
@@ -56,7 +67,11 @@ abstract class Editor(protected val shapes: ShapesList, protected val gc: Graphi
         isStillDrawing = false
         if (e.isDragDetect) return // returns if mouse was not dragged
         shape.setDm(curProcessor.process(dm))
-        shapes.add(shape.copy())
+
+        val command = AddItemCommand(shapes, shape)
+        command.execute()
+        history.add(command)
+
         redraw()
     }
 

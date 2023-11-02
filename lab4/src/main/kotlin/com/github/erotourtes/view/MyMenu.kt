@@ -1,5 +1,7 @@
 package com.github.erotourtes.view
 
+import com.github.erotourtes.drawing.history.NewCommand
+import com.github.erotourtes.drawing.history.OpenCommand
 import com.github.erotourtes.drawing.shape.ShapeState
 import com.github.erotourtes.utils.EditorInfo
 import com.github.erotourtes.utils.g
@@ -22,20 +24,18 @@ class MenuController : Controller() {
 
     fun new() {
         with(model) {
-            sl.clear()
-            c.graphicsContext2D
-                .clearRect(0.0, 0.0, model.c.width, model.c.height)
+            val operation = NewCommand(sl).apply { execute() }
+            h.add(operation)
         }
     }
 
     fun open() {
         chooseFile()?.let {
-            val shapes = shapeStatesFrom(it)
-            model.sl.apply {
-                clear()
-                shapes.forEach { state -> add(state.toShape(model.c.graphicsContext2D)) }
+            with(model) {
+                val shapes = shapeStatesFrom(it).map { s -> s.toShape(c.graphicsContext2D) }
+                val operation = OpenCommand(sl, shapes).apply { execute() }
+                h.add(operation)
             }
-            model.eh.getEditor().redraw()
         }
     }
 

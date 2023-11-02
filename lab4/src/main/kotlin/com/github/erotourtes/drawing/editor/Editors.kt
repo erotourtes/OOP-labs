@@ -1,10 +1,11 @@
 package com.github.erotourtes.drawing.editor
 
+import com.github.erotourtes.drawing.history.History
 import com.github.erotourtes.drawing.shape.*
 import javafx.scene.canvas.GraphicsContext
 import javafx.scene.input.MouseEvent
 
-class PointEditor(shapes: ShapesList, gc: GraphicsContext) : Editor(shapes, gc) {
+class PointEditor(shapes: ShapesList, gc: GraphicsContext, history: History) : Editor(shapes, gc, history) {
     override val shape = Point(gc)
 
     override fun onMouseDragged(e: MouseEvent) {}
@@ -23,7 +24,7 @@ class PointEditor(shapes: ShapesList, gc: GraphicsContext) : Editor(shapes, gc) 
     override fun previewLine() {}
 }
 
-class EmptyEditor(shapes: ShapesList, gc: GraphicsContext) : Editor(shapes, gc) {
+class EmptyEditor(shapes: ShapesList, gc: GraphicsContext, history: History) : Editor(shapes, gc, history) {
     override val shape = object : Shape(gc) {
         override fun draw() {}
     }
@@ -34,4 +35,5 @@ class EmptyEditor(shapes: ShapesList, gc: GraphicsContext) : Editor(shapes, gc) 
     override fun previewLine() {}
 }
 
-class ShapeEditor(override val shape: Shape, shapes: ShapesList, gc: GraphicsContext) : Editor(shapes, gc)
+class ShapeEditor(override val shape: Shape, shapes: ShapesList, gc: GraphicsContext, history: History) :
+    Editor(shapes, gc, history)

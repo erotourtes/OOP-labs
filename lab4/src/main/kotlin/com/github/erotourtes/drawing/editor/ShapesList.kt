@@ -1,31 +1,37 @@
 package com.github.erotourtes.drawing.editor
 
 import com.github.erotourtes.drawing.shape.Shape
+import javafx.collections.FXCollections
+import javafx.collections.ListChangeListener
 
-class ShapesList(n: Int) : Iterable<Shape> {
-    private val shapeArr = Array<Shape?>(n) { null }
-    private var shapeIndex = 0
+class ShapesList : Iterable<Shape> {
+    private val shapeArr = FXCollections.observableArrayList<Shape>()
 
     val size: Int
-        get() = shapeIndex
+        get() = shapeArr.size
 
     fun add(sh: Shape) {
-        if (shapeIndex == shapeArr.size) throw IllegalArgumentException("History is overflow")
-        shapeArr[shapeIndex++] = sh
+        shapeArr.add(sh)
+    }
+
+    fun addAll(shapes: List<Shape>) {
+        shapeArr.addAll(shapes)
+    }
+
+    fun addListener(listener: ListChangeListener<Shape>) = shapeArr.addListener(listener)
+
+    fun removeListener(listener: ListChangeListener<Shape>) = shapeArr.removeListener(listener)
+
+    fun remove(sh: Shape) {
+        shapeArr.remove(sh)
     }
 
     fun clear() {
-        shapeIndex = 0
+        shapeArr.clear()
     }
 
-    fun getList(): List<Shape> = shapeArr.copyOfRange(0, shapeIndex).filterNotNull()
+    fun getList(): List<Shape> = shapeArr.toList()
 
-    override fun iterator(): Iterator<Shape> = ShapeIterator()
-
-    inner class ShapeIterator : Iterator<Shape> {
-        private var curIndex = 0
-        override fun hasNext(): Boolean = curIndex < size
-        override fun next(): Shape = if (hasNext()) shapeArr[curIndex++]!! else throw IllegalAccessError()
-    }
-    override fun toString(): String = "ShapesList(index=$shapeIndex)"
+    override fun iterator(): Iterator<Shape> = shapeArr.iterator()
+    override fun toString(): String = "ShapesList(${shapeArr.size})"
 }

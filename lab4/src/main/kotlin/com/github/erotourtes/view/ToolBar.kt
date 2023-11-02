@@ -50,6 +50,9 @@ class ToolBarController : Controller() {
         }
     }
 
+    fun undo() = model.h.undo()
+    fun redo() = model.h.redo()
+
     fun toggle() = if (isDetached) attach() else detach()
 
     private fun attach() {
@@ -76,6 +79,7 @@ class ToolBar : View() {
 
     override val root = hbox {
         addClass(ToolbarStyles.toolbar)
+
         button {
             addClass(ToolbarStyles.iconButton)
             val detach = FontAwesomeIconView(FontAwesomeIcon.UNLINK)
@@ -83,10 +87,27 @@ class ToolBar : View() {
             graphic = detach
 
             action {
-                graphic = if(ctrl.detached) detach else attach
+                graphic = if (ctrl.detached) detach else attach
                 ctrl.toggle()
             }
         }
+        button {
+            addClass(ToolbarStyles.iconButton)
+            graphic = FontAwesomeIconView(FontAwesomeIcon.REPEAT)
+
+            action { ctrl.redo() }
+        }
+        button {
+            addClass(ToolbarStyles.iconButton)
+            graphic = FontAwesomeIconView(FontAwesomeIcon.UNDO)
+
+            action { ctrl.undo() }
+        }
+
+        label {
+            style { borderWidth += box(0.px, 0.px, 0.px, 1.px); borderColor += box(c("#000000")) }
+        }
+
         ctrl.create().forEach { add(it) }
     }
 }

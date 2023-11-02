@@ -1,5 +1,6 @@
 package com.github.erotourtes.view
 
+import javafx.scene.input.KeyCode
 import tornadofx.*
 
 class MainView : View("Lab4") {
@@ -15,6 +16,13 @@ class MainView : View("Lab4") {
         center = borderpane {
             top = find<ToolBar>(scope).root
             center = pane { ctrl.bindCanvas(this) }
+        }
+
+        setOnKeyPressed { event ->
+            when {
+                event.isControlDown && event.code == KeyCode.Z -> ctrl.undo()
+                event.isShiftDown && event.code == KeyCode.Z -> ctrl.redo()
+            }
         }
     }
 }
