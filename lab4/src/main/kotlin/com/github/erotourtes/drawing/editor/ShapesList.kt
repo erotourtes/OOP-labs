@@ -26,9 +26,7 @@ class ShapesList : Iterable<Shape> {
         shapeArr.remove(sh)
     }
 
-    fun clear() {
-        shapeArr.clear()
-    }
+    fun clear() = shapeArr.clear()
 
     fun getList(): List<Shape> = shapeArr.toList()
 

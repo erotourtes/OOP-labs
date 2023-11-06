@@ -9,7 +9,6 @@ import com.github.erotourtes.utils.n
 import javafx.application.Platform
 import javafx.embed.swing.SwingFXUtils
 import javafx.scene.control.*
-import javafx.scene.image.WritableImage
 import javafx.stage.FileChooser
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
@@ -20,7 +19,8 @@ import javax.imageio.ImageIO
 import kotlin.io.path.createTempFile
 
 class MenuController : Controller() {
-    private val model: CanvasModel by inject()
+    private val model: CanvasModel by inject(super.scope)
+    private val editorsInfoModel by inject<EditorsInfoModel>()
 
     fun new() {
         with(model) {
@@ -32,9 +32,8 @@ class MenuController : Controller() {
     fun open() {
         chooseFile()?.let {
             with(model) {
-                val shapes = shapeStatesFrom(it).map { s -> s.toShape(c.graphicsContext2D) }
-                val operation = OpenCommand(sl, shapes).apply { execute() }
-                h.add(operation)
+                val shapes = shapeStatesFrom(it).map(cc::initShape)
+                OpenCommand(sl, shapes).apply { execute() }.let(h::add)
             }
         }
     }
@@ -44,10 +43,8 @@ class MenuController : Controller() {
     }
 
     fun print() {
-        val c = model.c
-        val image = WritableImage(c.width.toInt(), c.height.toInt())
         val tempPath = createTempFile(suffix = ".png")
-        c.snapshot(null, image)
+        val image = model.cc.getSnapshotImage()
         ImageIO.write(
             SwingFXUtils.fromFXImage(image, null),
             tempPath.toString().substringAfter("."),
@@ -62,7 +59,7 @@ class MenuController : Controller() {
     fun create(): Menu {
         val group = ToggleGroup()
         val editorHandler = model.eh
-        val list = model.ei
+        val list = editorsInfoModel.editorsInfo.value
 
         editorHandler.listenToChanges { _, _, newValue ->
             group.toggles.forEach {

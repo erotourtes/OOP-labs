@@ -4,7 +4,7 @@ import javafx.scene.input.KeyCode
 import tornadofx.*
 
 class MainView : View("Lab4") {
-    override val scope = MyScope()
+    override val scope = Scope()
     private val ctrl: MainController by inject(scope)
 
     override val root = borderpane {

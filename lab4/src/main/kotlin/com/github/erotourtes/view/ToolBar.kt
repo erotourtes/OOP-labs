@@ -14,7 +14,8 @@ import tornadofx.*
 class ToolBarController : Controller() {
     val detached
         get() = isDetached
-    private val model: CanvasModel by inject()
+    private val model: CanvasModel by inject(super.scope)
+    private val editorsInfoModel by inject<EditorsInfoModel>()
     private val group = ToggleGroup()
     private lateinit var toolBar: ToolBar
     private var isDetached = false
@@ -23,7 +24,7 @@ class ToolBarController : Controller() {
         this.toolBar = view
     }
 
-    fun create() = model.ei.map {
+    fun create() = editorsInfoModel.editorsInfo.value.map {
         ToggleButton().apply {
             tooltip(it.tooltip)
             addClass(ToolbarStyles.iconButton)

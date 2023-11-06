@@ -1,5 +1,6 @@
 package com.github.erotourtes.view
 
+import com.github.erotourtes.drawing.CanvasController
 import com.github.erotourtes.drawing.EditorHandler
 import com.github.erotourtes.drawing.history.History
 import com.github.erotourtes.drawing.editor.*
@@ -7,18 +8,18 @@ import com.github.erotourtes.drawing.shape.*
 import com.github.erotourtes.utils.EditorFactory
 import com.github.erotourtes.utils.EditorInfo
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon
-import javafx.collections.FXCollections
 import javafx.scene.canvas.Canvas
 import javafx.scene.layout.Pane
 import tornadofx.*
 
 class MainController : Controller() {
-    private val cm: CanvasModel by inject()
+    private val cm: CanvasModel by inject(super.scope)
+    private val eim: EditorsInfoModel by inject()
     private val canvas = Canvas()
     private val shapes = ShapesList()
     private val history = History()
 
-    private val editorsInfo = FXCollections.observableArrayList(
+    private val editorsInfo = listOf(
         EditorInfo("Dot", "Dot", { s, g -> PointEditor(s, g, history) }, FontAwesomeIcon.DOT_CIRCLE_ALT),
         EditorInfo("Line", "Line", { s, g -> ShapeEditor(Line(g), s, g, history) }, FontAwesomeIcon.MINUS),
         EditorInfo("Rectangle", "Rectangle", { s, g -> ShapeEditor(Rect(g), s, g, history) }, FontAwesomeIcon.SQUARE),
@@ -35,7 +36,9 @@ class MainController : Controller() {
 
         val editorHandler = EditorHandler(shapes, factories, canvas)
             .apply { useEditor(EmptyEditor::class.java.name) }
-        cm.item = CanvasData(canvas, shapes, editorsInfo, editorHandler, history)
+        cm.item = CanvasData(shapes, editorHandler, history, CanvasController(canvas))
+
+        eim.editorsInfo.value = editorsInfo.asObservable()
     }
 
     fun bindCanvas(pane: Pane) {
