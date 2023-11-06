@@ -14,7 +14,7 @@ import tornadofx.*
 class ToolBarController : Controller() {
     val detached
         get() = isDetached
-    private val model: CanvasModel by inject(super.scope)
+    private val model by inject<CanvasModel>()
     private val editorsInfoModel by inject<EditorsInfoModel>()
     private val group = ToggleGroup()
     private lateinit var toolBar: ToolBar
@@ -71,7 +71,7 @@ class ToolBarController : Controller() {
 }
 
 class ToolBar : View() {
-    private val ctrl: ToolBarController by inject(super.scope)
+    private val ctrl by inject<ToolBarController>()
 
     override fun onDock() {
         ctrl.setView(this)

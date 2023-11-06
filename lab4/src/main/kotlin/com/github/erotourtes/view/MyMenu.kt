@@ -19,7 +19,7 @@ import javax.imageio.ImageIO
 import kotlin.io.path.createTempFile
 
 class MenuController : Controller() {
-    private val model: CanvasModel by inject(super.scope)
+    private val model by inject<CanvasModel>()
     private val editorsInfoModel by inject<EditorsInfoModel>()
 
     fun new() {
@@ -120,7 +120,7 @@ class MenuController : Controller() {
 }
 
 class MyMenu : View() {
-    private val ctrl: MenuController by inject(super.scope)
+    private val ctrl by inject<MenuController>()
 
     override val root = menubar {
         menu("File") {

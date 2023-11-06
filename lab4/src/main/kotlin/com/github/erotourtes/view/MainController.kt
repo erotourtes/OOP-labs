@@ -13,8 +13,8 @@ import javafx.scene.layout.Pane
 import tornadofx.*
 
 class MainController : Controller() {
-    private val cm: CanvasModel by inject(super.scope)
-    private val eim: EditorsInfoModel by inject()
+    private val cm by inject<CanvasModel>()
+    private val eim by inject<EditorsInfoModel>()
     private val canvas = Canvas()
     private val shapes = ShapesList()
     private val history = History()
