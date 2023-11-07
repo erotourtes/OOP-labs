@@ -18,6 +18,7 @@ class MainController : Controller() {
     private val canvas = Canvas()
     private val shapes = ShapesList()
     private val history = History()
+    private lateinit var editorHandler: EditorHandler
 
     private val editorsInfo = listOf(
         EditorInfo("Dot", "Dot", { s, g -> PointEditor(s, g, history) }, FontAwesomeIcon.DOT_CIRCLE_ALT),
@@ -34,7 +35,7 @@ class MainController : Controller() {
             this[EmptyEditor::class.java.name] = EditorFactory { s, g -> EmptyEditor(s, g, history) }
         }
 
-        val editorHandler = EditorHandler(shapes, factories, canvas)
+        editorHandler = EditorHandler(shapes, factories, canvas)
             .apply { useEditor(EmptyEditor::class.java.name) }
         cm.item = CanvasData(shapes, editorHandler, history, CanvasController(canvas))
 
@@ -45,6 +46,8 @@ class MainController : Controller() {
         pane += canvas
         canvas.widthProperty().bind(pane.widthProperty())
         canvas.heightProperty().bind(pane.heightProperty())
+        canvas.widthProperty().addListener { _,_,_ -> editorHandler.getEditor().redraw() }
+        canvas.heightProperty().addListener { _,_,_ -> editorHandler.getEditor().redraw() }
     }
 
     fun undo() = history.undo()
