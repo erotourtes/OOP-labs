@@ -3,7 +3,7 @@ package com.github.erotourtes.view
 import javafx.scene.input.KeyCode
 import tornadofx.*
 
-class MainView : View("Lab4") {
+class MainView : View("Lab5") {
     private val ctrl by inject<MainController>()
 
     override val root = borderpane {
