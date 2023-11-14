@@ -33,9 +33,10 @@ class ToolBarController : Controller() {
             isSelected = false
             userData = it
             action {
-                model.eh.useEditor(
-                    if (this.isSelected) it.name else EmptyEditor::class.java.name
-                )
+                val eh = model.eh
+
+                if (this.isSelected) eh.use(it.pair)
+                else eh.use(Pair(EmptyEditor.shape.javaClass, EmptyEditor))
             }
         }
     }
@@ -43,10 +44,10 @@ class ToolBarController : Controller() {
     fun listenToEditorChange() {
         val editorHandler = model.eh
 
-        editorHandler.listenToChanges { _, _, newValue ->
+        editorHandler.listenToChanges { _, _, _ ->
             group.toggles.forEach {
                 val userData = it.userData as EditorInfo
-                it.isSelected = userData.name == newValue
+                it.isSelected = editorHandler.isCurShapeActive(userData.pair)
             }
         }
     }

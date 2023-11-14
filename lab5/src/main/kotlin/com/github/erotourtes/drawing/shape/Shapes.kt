@@ -138,3 +138,7 @@ class Cube(gc: GraphicsContext) : Shape(gc) {
         }
     }
 }
+
+class EmptyShape(gc: GraphicsContext) : Shape(gc) {
+    override fun draw() {}
+}

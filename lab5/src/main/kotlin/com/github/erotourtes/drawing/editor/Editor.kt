@@ -10,18 +10,31 @@ import javafx.scene.canvas.GraphicsContext
 import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseEvent
 
-abstract class Editor(
-    protected val shapes: ShapesList,
-    protected val gc: GraphicsContext,
-    protected val history: History,
-) {
+abstract class Editor {
+    protected lateinit var shapes: ShapesList
+    protected lateinit var gc: GraphicsContext
+    protected lateinit var history: History
+    private lateinit var _shape: Shape
+
+    var shape: Shape
+        get() = _shape
+        set(value) {
+            this._shape = value
+        }
+
+    fun init(shapes: ShapesList, gc: GraphicsContext, history: History, shape: Shape) {
+        this.shapes = shapes
+        this.gc = gc
+        this.history = history
+        this.shape = shape
+    }
+
     protected val dm = Dimension()
 
     protected open var curProcessor: DmProcessor = DmProcessor { it }
     protected open val processor: DmProcessor = DmProcessor { it }
     protected open val altProcessor: DmProcessor = DmProcessor { Dimension.toCorner(it) }
     protected open val ctrlProcessor: DmProcessor = DmProcessor { Dimension.toEqual(it) }
-    protected abstract val shape: Shape
 
     protected open val shapesChangeListener = ListChangeListener<Shape> { redraw() }
 

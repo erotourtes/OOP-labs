@@ -1,31 +1,33 @@
 package com.github.erotourtes.drawing
 
 import com.github.erotourtes.drawing.editor.Editor
-import com.github.erotourtes.drawing.editor.ShapesList
-import com.github.erotourtes.utils.EditorFactory
-import com.github.erotourtes.utils.n
+import com.github.erotourtes.drawing.shape.Shape
 import javafx.beans.property.SimpleObjectProperty
 import javafx.beans.value.ChangeListener
 import javafx.scene.canvas.Canvas
+import javafx.scene.canvas.GraphicsContext
+import tornadofx.*
 
-class EditorHandler(private val shapes: ShapesList, private val factories: Map<String, EditorFactory>, private val canvas: Canvas) {
-    private var editors: MutableMap<String, Editor> = mutableMapOf()
-    private val curEditor = SimpleObjectProperty<String>()
+class EditorHandler(
+    private val canvas: Canvas
+) {
+    private lateinit var curEditor: Editor
+    private var curShape = SimpleObjectProperty<Shape>()
 
-    fun useEditor(editorName: String) {
-        editors[curEditor.get()]?.disableEvents()
+    val shape: Shape by curShape
+    val editor: Editor get() = curEditor
 
-        val editor = getOrCreateEditor(editorName)
-        editor.listenToEvents()
-        curEditor.set(editorName)
+    fun use(pair: Pair<Class<out Shape>, Editor>) {
+        with(pair) {
+            curEditor = second.apply { shape = getShape(first); listenToEvents() }
+            curShape.value = curEditor.shape
+        }
     }
 
-    fun getEditor() = editors[curEditor.get()] ?: throw Exception("Editor is not found")
+    fun listenToChanges(subscriber: ChangeListener<Shape>) = curShape.addListener(subscriber)
 
-    fun listenToChanges(subscriber: ChangeListener<String>) = curEditor.addListener(subscriber)
+    fun isCurShapeActive(pair: Pair<Class<out Shape>, Editor>): Boolean = pair.first == curEditor.shape.javaClass
 
-    private fun getOrCreateEditor(editorName: String): Editor = editors.getOrPut(editorName) {
-        factories[editorName]?.create(shapes, canvas.graphicsContext2D)
-            ?: throw Exception("Editor with name $editorName is not found")
-    }
+    private fun getShape(clazz: Class<out Shape>) =
+        clazz.getConstructor(GraphicsContext::class.java).newInstance(canvas.graphicsContext2D)
 }

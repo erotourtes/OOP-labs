@@ -61,16 +61,16 @@ class MenuController : Controller() {
         val editorHandler = model.eh
         val list = editorsInfoModel.editorsInfo.value
 
-        editorHandler.listenToChanges { _, _, newValue ->
+        editorHandler.listenToChanges { _, _, _ ->
             group.toggles.forEach {
                 val userData = it.userData as EditorInfo
-                it.isSelected = userData.name == newValue
+                it.isSelected = editorHandler.isCurShapeActive(userData.pair)
             }
         }
 
         val objectsUI = list.map {
             RadioMenuItem(it.name).apply {
-                action { editorHandler.useEditor(it.name) }
+                action { editorHandler.use(it.pair) }
                 toggleGroup = group
                 isSelected = false
                 userData = it
