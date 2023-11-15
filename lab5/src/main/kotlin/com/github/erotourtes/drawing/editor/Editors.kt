@@ -1,5 +1,6 @@
 package com.github.erotourtes.drawing.editor
 
+import com.github.erotourtes.drawing.history.AddItemCommand
 import com.github.erotourtes.utils.SingletonHolder
 import javafx.scene.input.MouseEvent
 
@@ -13,7 +14,9 @@ class PointEditor private constructor() : Editor() {
     }
 
     override fun onMouseReleased(e: MouseEvent) {
-        shapes.add(shape.copy())
+        val command = AddItemCommand(shapes, shape).also { it.execute() }
+        history.add(command)
+
         redraw()
     }
 

@@ -81,8 +81,7 @@ abstract class Editor {
         if (e.isDragDetect) return // returns if mouse was not dragged
         shape.setDm(curProcessor.process(dm))
 
-        val command = AddItemCommand(shapes, shape)
-        command.execute()
+        val command = AddItemCommand(shapes, shape).also { it.execute() }
         history.add(command)
 
         redraw()
