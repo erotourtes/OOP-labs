@@ -128,4 +128,28 @@ abstract class Editor {
         gc.stroke = Color.BLACK
         gc.fill = Color.TRANSPARENT
     }
+
+    fun highlight(shape: Shape) {
+        redraw()
+        gc.drawOnce {
+            setHighlightProperties()
+            val shapeArea = shape.dmCopy.apply {
+                val (first, second) = getRaw()
+                val nX = if (second.x > first.x) 1 else -1
+                val nY = if (second.y > first.y) 1 else -1
+                val size = 15
+                setStart(first.x - size * nX, first.y - size * nY)
+                setEnd(second.x + size * nX, second.y + size * nY)
+            }
+
+            Rect(gc).drawOnce(shapeArea)
+        }
+    }
+
+    protected fun setHighlightProperties() {
+        gc.setLineDashes(5.0)
+        gc.lineWidth = 5.0
+        gc.stroke = Color.BLUEVIOLET
+        gc.fill = Color.TRANSPARENT
+    }
 }

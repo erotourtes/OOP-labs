@@ -4,6 +4,7 @@ import com.github.erotourtes.utils.Dimension
 import com.github.erotourtes.utils.drawOnce
 import javafx.scene.canvas.GraphicsContext
 import javafx.scene.paint.Color
+import tornadofx.*
 import java.lang.RuntimeException
 
 abstract class Shape(val gc: GraphicsContext) {
@@ -16,6 +17,14 @@ abstract class Shape(val gc: GraphicsContext) {
 
     open fun draw(dm: Dimension) = setDm(dm).draw()
 
+    fun drawOnce(dm: Dimension, setDefaultProps: Boolean = false) {
+        val copy = dmCopy
+        setDm(dm)
+        if (setDefaultProps) drawWithProperties()
+        else draw()
+        setDm(copy)
+    }
+
     open fun drawWithProperties() {
         gc.drawOnce {
             setProperties()
@@ -24,6 +33,8 @@ abstract class Shape(val gc: GraphicsContext) {
     }
 
     open fun setDm(curDm: Dimension) = curDm.copyTo(dm).let { this }
+
+    val dmCopy get() = dm.copy()
 
     private fun setProperties() {
         with(gc) {
@@ -50,4 +61,19 @@ abstract class Shape(val gc: GraphicsContext) {
         colorFill,
         colorStroke,
     )
+
+    val model = ShapeModel(this)
+
+    class ShapeModel(shape: Shape) : ItemViewModel<Shape>(shape) {
+
+        override fun onCommit() {
+            super.onCommit()
+            item.dm.model.commit()
+        }
+
+        val x1 = bind { item.dm.model.x1 }
+        val x2 = bind { item.dm.model.x2 }
+        val y1 = bind { item.dm.model.y1 }
+        val y2 = bind { item.dm.model.y2 }
+    }
 }

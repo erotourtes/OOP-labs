@@ -10,6 +10,7 @@ import javafx.application.Platform
 import javafx.embed.swing.SwingFXUtils
 import javafx.scene.control.*
 import javafx.stage.FileChooser
+import javafx.stage.Modality
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
 import tornadofx.*
@@ -80,6 +81,14 @@ class MenuController : Controller() {
         return Menu("Objects").apply { items.addAll(objectsUI) }
     }
 
+    fun openTable() {
+        find<Table>().openModal(
+            modality = Modality.NONE,
+            escapeClosesWindow = true,
+            owner = find<MainView>().currentWindow
+        )
+    }
+
     private fun saveFile(): File? {
         val fileChooser = FileChooser().apply {
             title = "Save as..."
@@ -134,6 +143,8 @@ class MyMenu : View() {
         }
 
         menus.addAll(ctrl.create())
+
+        menu("Table") { item("Show") { action(ctrl::openTable) } }
 
         menu("Help") {
             item(

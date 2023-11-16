@@ -3,6 +3,7 @@ package com.github.erotourtes.drawing.editor
 import com.github.erotourtes.drawing.shape.Shape
 import javafx.collections.FXCollections
 import javafx.collections.ListChangeListener
+import javafx.collections.ObservableList
 
 class ShapesList : Iterable<Shape> {
     private val shapeArr = FXCollections.observableArrayList<Shape>()
@@ -29,6 +30,8 @@ class ShapesList : Iterable<Shape> {
     fun clear() = shapeArr.clear()
 
     fun getList(): List<Shape> = shapeArr.toList()
+
+    fun getObservableList(): ObservableList<Shape> = shapeArr
 
     override fun iterator(): Iterator<Shape> = shapeArr.iterator()
     override fun toString(): String = "ShapesList(${shapeArr.size})"

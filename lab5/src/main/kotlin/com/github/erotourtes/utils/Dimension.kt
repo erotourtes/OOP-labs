@@ -1,24 +1,27 @@
 package com.github.erotourtes.utils
 
-import kotlinx.serialization.KSerializer
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.descriptors.PrimitiveKind
-import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
-import kotlinx.serialization.descriptors.SerialDescriptor
-import kotlinx.serialization.encoding.Decoder
-import kotlinx.serialization.encoding.Encoder
+import javafx.beans.property.SimpleDoubleProperty
+import tornadofx.*
 import kotlin.math.abs
 
 class Dimension {
-    private var x1: Double = 0.0
-    private var y1: Double = 0.0
-    private var x2: Double = 0.0
-    private var y2: Double = 0.0
+    private val x1Prop = SimpleDoubleProperty(0.0)
+    private val y1Prop = SimpleDoubleProperty(0.0)
+    private val x2Prop = SimpleDoubleProperty(0.0)
+    private val y2Prop = SimpleDoubleProperty(0.0)
 
-    val width: Double
-        get() = abs(x2 - x1)
-    val height: Double
-        get() = abs(y2 - y1)
+    private var x1 by x1Prop
+    private var y1 by y1Prop
+    private var x2 by x2Prop
+    private var y2 by y2Prop
+
+    val getX1Prop get() = x1Prop
+    val getY1Prop get() = y1Prop
+    val getX2Prop get() = x2Prop
+    val getY2Prop get() = y2Prop
+
+    val width: Double get() = abs(x2 - x1)
+    val height: Double get() = abs(y2 - y1)
 
     fun setStart(x: Double, y: Double): Dimension {
         x1 = x
