@@ -5,12 +5,34 @@ import com.github.erotourtes.drawing.shape.Shape
 import com.github.erotourtes.drawing.shape.Shape.ShapeModel
 import com.github.erotourtes.utils.shapeStatesToJSON
 import javafx.beans.property.SimpleStringProperty
+import javafx.beans.value.ObservableValue
 import javafx.collections.ListChangeListener
+import javafx.collections.ObservableList
 import javafx.geometry.Pos
+import javafx.scene.control.TableView
 import javafx.stage.FileChooser
 import javafx.stage.StageStyle
 import tornadofx.*
 import java.io.File
+
+class Table<E, S>(
+    private val data: ObservableList<E>,
+    private val columnsData: List<Pair<String, (E) -> ObservableValue<S>>>,
+) {
+
+    var onUserSelectCb: (E) -> Unit = {}
+
+    val root
+        get() = TableView<E>().apply {
+            columnsData.forEach {
+                val (name, gerObservable) = it
+                column(name) { value -> gerObservable(value.value) }
+            }
+
+            items = data
+            onUserSelect(1, onUserSelectCb)
+        }
+}
 
 class Form : View("Edit") {
     private val model by inject<CanvasModel>()
@@ -20,6 +42,8 @@ class Form : View("Edit") {
         val editorHandler = model.eh
         hiddenWhen(shapeModel.isEmptyShape)
         fieldset("Selected Shape") {
+            textProperty.bind(shapeModel.itemProperty.stringBinding { "Selected Shape ${it?.javaClass?.simpleName ?: ""}" })
+
             hbox {
                 style { alignment = Pos.CENTER }
                 button("Save") {
@@ -98,35 +122,38 @@ class TableController : Controller() {
     ).firstOrNull()
 }
 
-class Table : View("Table") {
+class TableView : View("Table") {
     private val ctrl by inject<TableController>()
     private val shapeModel by inject<ShapeModel>()
 
-    override val root = borderpane {
-        center = tableview<Shape> {
-            column("x1") { it.value.x1Prop }
-            column("y1") { it.value.y1Prop }
-            column("x2") { it.value.x2Prop }
-            column("y2") { it.value.y2Prop }
+    private val columnsData = listOf(
+        "x1" to { shape: Shape -> shape.x1Prop },
+        "y1" to { shape: Shape -> shape.y1Prop },
+        "x2" to { shape: Shape -> shape.x2Prop },
+        "y2" to { shape: Shape -> shape.y2Prop },
+    )
 
-            items = ctrl.data
-            onUserSelect(1) {
-                find<Form>().openModal(
-                    stageStyle = StageStyle.UTILITY,
-                    escapeClosesWindow = true,
-                    owner = this@Table.currentWindow
-                )
+    private val table = Table(ctrl.data, columnsData).apply {
+        onUserSelectCb = {
+            find<Form>().openModal(
+                stageStyle = StageStyle.UTILITY,
+                escapeClosesWindow = true,
+                owner = this@TableView.currentWindow
+            )
 
-                ctrl.highlight(it)
-                shapeModel.item = it
-            }
-//            shapeModel.rebindOnChange(this) { item = it }
+            ctrl.highlight(it)
+            shapeModel.item = it
         }
+    }
 
+    override val root = borderpane {
+        center = table.root
         bottom = hbox {
             button("Select File") { action { ctrl.selectFile() } }
-            checkbox("Auto Save to file: ") { action { ctrl.autoSave(isSelected) } }
-            label { bind(ctrl.fileNameProp) }
+            checkbox("Auto Save to file") {
+                bind(ctrl.fileNameProp.stringBinding { str -> "Auto save to file ${str ?: "none"}" })
+                action { ctrl.autoSave(isSelected) }
+            }
         }
     }
 }

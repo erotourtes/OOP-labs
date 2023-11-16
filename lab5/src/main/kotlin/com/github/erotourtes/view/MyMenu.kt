@@ -83,7 +83,7 @@ class MenuController : Controller() {
     }
 
     fun openTable() {
-        find<Table>().openModal(
+        find<TableView>().openModal(
             modality = Modality.NONE,
             escapeClosesWindow = true,
             owner = find<MainView>().currentWindow
