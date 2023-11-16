@@ -14,6 +14,12 @@ class Point : Shape() {
             strokeOval(x, y, radius, radius)
         }
     }
+
+    override fun getBounds(dm: Dimension): Dimension {
+        val radius = 12.0
+        val (x, y) = dm.getRaw().second
+        return Dimension.from(x, y, x + radius, y + radius)
+    }
 }
 
 class Line : Shape() {
@@ -67,17 +73,8 @@ class CubeEx : Shape() {
     // failed math but got a nice effect
     override fun draw(gc: GraphicsContext, dm: Dimension) {
         gc.apply {
-            val (s, e) = dm.getRaw()
-            val w = e.x - s.x
-            val h = e.y - s.y
-
-            val depthFactor = 0.5
-            val size = abs(w.coerceAtLeast(h))
-            val depthX = w * depthFactor
-            val depthY = h * depthFactor
-
-            val bgX = s.x + depthX
-            val bgY = s.y - depthY
+            val (s, bg, size) = getCoords(dm)
+            val (bgX, bgY) = bg
 
             strokeRect(s.x, s.y, size, size)
             strokeRect(bgX, bgY, size, size)
@@ -96,6 +93,30 @@ class CubeEx : Shape() {
             draw(gc, state.dm)
         }
     }
+
+    override fun getBounds(dm: Dimension): Dimension {
+        val (s, bg, size) = getCoords(dm)
+        val (bgX, bgY) = bg
+
+        val d = Dimension
+        return d.from(s.x, s.y, bgX + size, bgY + size)
+    }
+
+    private fun getCoords(dm: Dimension): Triple<Dimension.Point, Pair<Double, Double>, Double> {
+        val (s, e) = dm.getRaw()
+        val w = e.x - s.x
+        val h = e.y - s.y
+
+        val depthFactor = 0.5
+        val size = abs(w.coerceAtLeast(h))
+        val depthX = w * depthFactor
+        val depthY = h * depthFactor
+
+        val bgX = s.x + depthX
+        val bgY = s.y - depthY
+
+        return Triple(s, Pair(bgX, bgY), size)
+    }
 }
 
 class Cube : Shape() {
@@ -104,20 +125,9 @@ class Cube : Shape() {
 
     override fun draw(gc: GraphicsContext, dm: Dimension) {
         gc.apply {
-            var (s, e) = dm.getRaw()
-            val w = e.x - s.x
-            val h = e.y - s.y
-
-            val depthFactor = 0.5
-            val sizeX = abs(w)
-            val sizeY = abs(h)
-            val depthX = w * depthFactor
-            val depthY = h * depthFactor
-
-            s = dm.getBoundaries().first
-
-            val bgX = s.x + depthX
-            val bgY = s.y - depthY
+            val (s, bg, size) = getCoords(dm)
+            val (bgX, bgY) = bg
+            val (sizeX, sizeY) = size
 
             val d = Dimension
 
@@ -141,6 +151,39 @@ class Cube : Shape() {
             gc.fill = Color.TRANSPARENT
             draw(gc, state.dm)
         }
+    }
+
+    override fun getBounds(dm: Dimension): Dimension {
+        val (s, bg, size) = getCoords(dm)
+        val (bgX, bgY) = bg
+        val (sizeX, sizeY) = size
+
+        val sX = s.x.coerceAtMost(bgX)
+        val sY = s.y.coerceAtMost(bgY)
+        val eX = (s.x + sizeX).coerceAtLeast(bgX + sizeX)
+        val eY = (s.y + sizeY).coerceAtLeast(bgY + sizeY)
+
+        val d = Dimension
+        return d.from(sX, sY, eX, eY)
+    }
+
+    private fun getCoords(dm: Dimension): Triple<Dimension.Point, Pair<Double, Double>, Pair<Double, Double>> {
+        var (s, e) = dm.getRaw()
+        val w = e.x - s.x
+        val h = e.y - s.y
+
+        val depthFactor = 0.5
+        val sizeX = abs(w)
+        val sizeY = abs(h)
+        val depthX = w * depthFactor
+        val depthY = h * depthFactor
+
+        s = dm.getBoundaries().first
+
+        val bgX = s.x + depthX
+        val bgY = s.y - depthY
+
+        return Triple(s, Pair(bgX, bgY), Pair(sizeX, sizeY))
     }
 }
 

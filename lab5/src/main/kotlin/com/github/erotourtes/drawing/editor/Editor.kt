@@ -132,7 +132,7 @@ abstract class Editor {
         redraw()
         gc.drawOnce {
             setHighlightProperties()
-            val shapeArea = shape.copyDm.apply {
+            val shapeArea = shape.getBounds().apply {
                 val (first, second) = getRaw()
                 val nX = if (second.x > first.x) 1 else -1
                 val nY = if (second.y > first.y) 1 else -1

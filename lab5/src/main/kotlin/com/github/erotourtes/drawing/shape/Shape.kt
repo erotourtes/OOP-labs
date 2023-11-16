@@ -37,6 +37,9 @@ abstract class Shape {
         }
     }
 
+    open fun getBounds(dm: Dimension) = dm
+    fun getBounds() = getBounds(copyDm)
+
     val copyDm get() = state.dm.copy()
     val copyState get() = state.copy()
 
