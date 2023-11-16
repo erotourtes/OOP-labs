@@ -1,5 +1,7 @@
 package com.github.erotourtes.view
 
+import com.github.erotourtes.drawing.history.ChangeCoordinatesCommand
+import com.github.erotourtes.drawing.history.RemoveItemCommand
 import com.github.erotourtes.drawing.shape.EmptyShape
 import com.github.erotourtes.drawing.shape.Shape
 import com.github.erotourtes.drawing.shape.Shape.ShapeModel
@@ -49,23 +51,20 @@ class Form : View("Edit") {
                 button("Save") {
                     enableWhen(shapeModel.dirty)
                     action {
-                        shapeModel.commit()
-                        with(editorHandler.editor) {
-                            redraw()
-                            highlight(shapeModel.item)
+                        // TODO: bind redraw to changes in coordinates
+                        ChangeCoordinatesCommand(shapeModel, editorHandler.editor::redraw).apply {
+                            execute()
+                            model.h.add(this)
                         }
                     }
                 }
                 button("Reset") { action { shapeModel.rollback() } }
                 button("Delete") {
                     action {
-                        with(editorHandler.editor) {
-                            shapeModel.item?.let {
-                                model.sl.remove(it)
-                                redraw()
-                            }
+                        RemoveItemCommand(model.sl, shapeModel.item).apply {
+                            execute()
+                            model.h.add(this)
                         }
-
                         this@Form.close()
                     }
                 }
