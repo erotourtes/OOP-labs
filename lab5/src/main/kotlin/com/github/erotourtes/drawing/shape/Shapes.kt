@@ -5,8 +5,8 @@ import javafx.scene.canvas.GraphicsContext
 import javafx.scene.paint.Color
 import kotlin.math.abs
 
-class Point(gc: GraphicsContext) : Shape(gc) {
-    override fun draw() {
+class Point : Shape() {
+    override fun draw(gc: GraphicsContext, dm: Dimension) {
         val radius = 12.0
         gc.apply {
             val (x, y) = dm.getRaw().second
@@ -16,19 +16,15 @@ class Point(gc: GraphicsContext) : Shape(gc) {
     }
 }
 
-class Line(gc: GraphicsContext) : Shape(gc) {
-    override fun draw() {
+class Line : Shape() {
+    override fun draw(gc: GraphicsContext, dm: Dimension) {
         gc.apply { strokeLine(dm) }
     }
 }
 
-class Rect(gc: GraphicsContext) : Shape(gc) {
-    init {
-        colorFill = Color.TRANSPARENT
-        colorStroke = Color.BLACK
-    }
 
-    override fun draw() {
+class Rect : Shape() {
+    override fun draw(gc: GraphicsContext, dm: Dimension) {
         gc.apply {
             fillRect(dm)
             strokeRect(dm)
@@ -36,13 +32,8 @@ class Rect(gc: GraphicsContext) : Shape(gc) {
     }
 }
 
-class Ellipse(gc: GraphicsContext) : Shape(gc) {
-    init {
-        colorFill = Color.ORANGE
-        colorStroke = Color.BLACK
-    }
-
-    override fun draw() {
+class Ellipse : Shape() {
+    override fun draw(gc: GraphicsContext, dm: Dimension) {
         gc.apply {
             fillOval(dm)
             strokeOval(dm)
@@ -50,11 +41,11 @@ class Ellipse(gc: GraphicsContext) : Shape(gc) {
     }
 }
 
-class Dumbbell(gc: GraphicsContext) : Shape(gc) {
-    private val line = Line(gc)
-    private val ellipse = Ellipse(gc)
+class Dumbbell : Shape() {
+    private val line = Line()
+    private val ellipse = Ellipse()
 
-    override fun draw() {
+    override fun draw(gc: GraphicsContext, dm: Dimension) {
         gc.apply {
             val radius = 24.0
             val hr = radius / 2
@@ -62,18 +53,19 @@ class Dumbbell(gc: GraphicsContext) : Shape(gc) {
 
             with(ellipse) {
                 val d = Dimension
-                draw(d.from(start.x - hr, start.y - hr, start.x + hr, start.y + hr))
-                draw(d.from(end.x - hr, end.y - hr, end.x + hr, end.y + hr))
+
+                draw(gc, d.from(start.x - hr, start.y - hr, start.x + hr, start.y + hr))
+                draw(gc, d.from(end.x - hr, end.y - hr, end.x + hr, end.y + hr))
             }
 
-            line.draw(dm)
+            line.draw(gc, dm)
         }
     }
 }
 
-class CubeEx(gc: GraphicsContext) : Shape(gc) {
+class CubeEx : Shape() {
     // failed math but got a nice effect
-    override fun draw() {
+    override fun draw(gc: GraphicsContext, dm: Dimension) {
         gc.apply {
             val (s, e) = dm.getRaw()
             val w = e.x - s.x
@@ -96,17 +88,21 @@ class CubeEx(gc: GraphicsContext) : Shape(gc) {
             strokeLine(s.x + size, s.y + size, bgX + size, bgY + size)
         }
     }
+
+    override fun drawWithState(gc: GraphicsContext) {
+        gc.drawOnce {
+            state.gcState.apply(this)
+            gc.fill = Color.TRANSPARENT
+            draw(gc, state.dm)
+        }
+    }
 }
 
-class Cube(gc: GraphicsContext) : Shape(gc) {
-    private val square = Rect(gc)
-    private val line = Line(gc)
+class Cube : Shape() {
+    private val square = Rect()
+    private val line = Line()
 
-    init {
-        colorFill = Color.TRANSPARENT
-    }
-
-    override fun draw() {
+    override fun draw(gc: GraphicsContext, dm: Dimension) {
         gc.apply {
             var (s, e) = dm.getRaw()
             val w = e.x - s.x
@@ -126,20 +122,28 @@ class Cube(gc: GraphicsContext) : Shape(gc) {
             val d = Dimension
 
             with(square) {
-                draw(d.from(s.x, s.y, s.x + sizeX, s.y + sizeY))
-                draw(d.from(bgX, bgY, bgX + sizeX, bgY + sizeY))
+                draw(gc, d.from(s.x, s.y, s.x + sizeX, s.y + sizeY))
+                draw(gc, d.from(bgX, bgY, bgX + sizeX, bgY + sizeY))
             }
 
             with(line) {
-                draw(d.from(s.x, s.y, bgX, bgY))
-                draw(d.from(s.x + sizeX, s.y, bgX + sizeX, bgY))
-                draw(d.from(s.x, s.y + sizeY, bgX, bgY + sizeY))
-                draw(d.from(s.x + sizeX, s.y + sizeY, bgX + sizeX, bgY + sizeY))
+                draw(gc, d.from(s.x, s.y, bgX, bgY))
+                draw(gc, d.from(s.x + sizeX, s.y, bgX + sizeX, bgY))
+                draw(gc, d.from(s.x, s.y + sizeY, bgX, bgY + sizeY))
+                draw(gc, d.from(s.x + sizeX, s.y + sizeY, bgX + sizeX, bgY + sizeY))
             }
+        }
+    }
+
+    override fun drawWithState(gc: GraphicsContext) {
+        gc.drawOnce {
+            state.gcState.apply(this)
+            gc.fill = Color.TRANSPARENT
+            draw(gc, state.dm)
         }
     }
 }
 
-class EmptyShape(gc: GraphicsContext) : Shape(gc) {
-    override fun draw() {}
+object EmptyShape : Shape() {
+    override fun draw(gc: GraphicsContext, dm: Dimension) {}
 }

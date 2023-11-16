@@ -33,7 +33,7 @@ class MenuController : Controller() {
     fun open() {
         chooseFile()?.let {
             with(model) {
-                val shapes = shapeStatesFrom(it).map(cc::initShape)
+                val shapes = shapeStatesFrom(it).map { it.toShape() }
                 OpenCommand(sl, shapes).apply { execute() }.let(h::add)
             }
         }
@@ -121,7 +121,7 @@ class MenuController : Controller() {
 
     private val shapeStatesAsJSON: String
         get() {
-            val shapes = model.sl.getList().map { it.getState() }
+            val shapes = model.sl.getList().map { it.copyState }
             val json = Json { prettyPrint = true }
 
             return json.encodeToString(ListSerializer(ShapeState.serializer), shapes)

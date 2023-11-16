@@ -22,7 +22,7 @@ abstract class Editor {
             this._shape = value
         }
 
-    fun init(shapes: ShapesList, gc: GraphicsContext, history: History, shape: Shape) {
+    fun init(shapes: ShapesList, gc: GraphicsContext, history: History, shape: Shape = EmptyShape) {
         this.shapes = shapes
         this.gc = gc
         this.history = history
@@ -105,7 +105,7 @@ abstract class Editor {
 
 
     private fun drawAll() {
-        for (shape in shapes) shape.drawWithProperties()
+        for (shape in shapes) shape.drawWithState(gc)
     }
 
     private fun clear() = gc.clearRect(0.0, 0.0, gc.canvas.width, gc.canvas.height)
@@ -118,8 +118,7 @@ abstract class Editor {
     protected open fun previewLine() {
         gc.drawOnce {
             setPreviewProperties()
-            shape.setDm(curProcessor.process(dm))
-            shape.draw()
+            shape.draw(this, curProcessor.process(dm))
         }
     }
 
@@ -133,7 +132,7 @@ abstract class Editor {
         redraw()
         gc.drawOnce {
             setHighlightProperties()
-            val shapeArea = shape.dmCopy.apply {
+            val shapeArea = shape.copyDm.apply {
                 val (first, second) = getRaw()
                 val nX = if (second.x > first.x) 1 else -1
                 val nY = if (second.y > first.y) 1 else -1
@@ -142,7 +141,7 @@ abstract class Editor {
                 setEnd(second.x + size * nX, second.y + size * nY)
             }
 
-            Rect(gc).drawOnce(shapeArea)
+            Rect().draw(gc, shapeArea)
         }
     }
 

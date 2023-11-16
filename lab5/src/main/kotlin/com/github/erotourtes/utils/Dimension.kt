@@ -1,9 +1,11 @@
 package com.github.erotourtes.utils
 
 import javafx.beans.property.SimpleDoubleProperty
+import kotlinx.serialization.Serializable
 import tornadofx.*
 import kotlin.math.abs
 
+@Serializable
 class Dimension {
     private val x1Prop = SimpleDoubleProperty(0.0)
     private val y1Prop = SimpleDoubleProperty(0.0)
@@ -91,5 +93,7 @@ class Dimension {
 
         fun from(x1: Double, y1: Double, x2: Double, y2: Double): Dimension =
             Dimension().setStart(x1, y1).setEnd(x2, y2)
+
+        val serializer get() = DimensionSerializer
     }
 }

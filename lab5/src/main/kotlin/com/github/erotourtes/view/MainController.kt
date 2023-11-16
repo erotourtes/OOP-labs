@@ -33,18 +33,18 @@ class MainController : Controller() {
         val gc = canvas.graphicsContext2D
         editorsInfo.forEach {
             val (_, editor) = it.pair
-            editor.init(shapeList, gc, history, EmptyShape(gc))
+            editor.init(shapeList, gc, history)
         }
-        EmptyEditor.init(shapeList, gc, history, EmptyShape(gc))
+        EmptyEditor.init(shapeList, gc, history)
     }
 
     fun populate() {
         populateEditors()
 
-        editorHandler = EditorHandler(canvas)
-            .apply { use(Pair(EmptyEditor.shape.javaClass, EmptyEditor)) }
-        cm.item = CanvasData(shapeList, editorHandler, history, CanvasController(canvas))
+        val maps = editorsInfo.associate { it.pair } + (EmptyShape.javaClass to EmptyEditor)
+        editorHandler = EditorHandler(canvas, maps).apply { use(EmptyShape) }
 
+        cm.item = CanvasData(shapeList, editorHandler, history, CanvasController(canvas))
         eim.editorsInfo.value = editorsInfo.asObservable()
     }
 
