@@ -1,6 +1,7 @@
 package com.github.erotourtes.drawing.editor
 
 import com.github.erotourtes.drawing.shape.Shape
+import com.github.erotourtes.drawing.shape.ShapeState
 import javafx.collections.FXCollections
 import javafx.collections.ListChangeListener
 import javafx.collections.ObservableList
@@ -30,6 +31,8 @@ class ShapesList : Iterable<Shape> {
     fun clear() = shapeArr.clear()
 
     fun getList(): List<Shape> = shapeArr.toList()
+
+    fun getStatesList(): List<ShapeState> = shapeArr.map { it.copyState }
 
     fun getObservableList(): ObservableList<Shape> = shapeArr
 

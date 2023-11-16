@@ -6,6 +6,7 @@ import com.github.erotourtes.drawing.shape.ShapeState
 import com.github.erotourtes.utils.EditorInfo
 import com.github.erotourtes.utils.g
 import com.github.erotourtes.utils.n
+import com.github.erotourtes.utils.shapeStatesToJSON
 import javafx.application.Platform
 import javafx.embed.swing.SwingFXUtils
 import javafx.scene.control.*
@@ -40,7 +41,7 @@ class MenuController : Controller() {
     }
 
     fun saveAs() {
-        saveFile()?.writeText(shapeStatesAsJSON)
+        saveFile()?.writeText(shapeStatesToJSON(model.sl.getStatesList()))
     }
 
     fun print() {
@@ -118,14 +119,6 @@ class MenuController : Controller() {
         val jsonShapeState = it.readText()
         return json.decodeFromString(ListSerializer(ShapeState.serializer), jsonShapeState)
     }
-
-    private val shapeStatesAsJSON: String
-        get() {
-            val shapes = model.sl.getList().map { it.copyState }
-            val json = Json { prettyPrint = true }
-
-            return json.encodeToString(ListSerializer(ShapeState.serializer), shapes)
-        }
 }
 
 class MyMenu : View() {

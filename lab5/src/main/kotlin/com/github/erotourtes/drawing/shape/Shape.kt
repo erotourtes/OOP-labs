@@ -4,6 +4,7 @@ import com.github.erotourtes.drawing.GCState
 import com.github.erotourtes.utils.Dimension
 import com.github.erotourtes.utils.drawOnce
 import javafx.scene.canvas.GraphicsContext
+import tornadofx.*
 
 abstract class Shape {
     protected var state = ShapeState(
@@ -41,5 +42,22 @@ abstract class Shape {
 
     fun setStateWith(state: ShapeState) {
         this.state = state
+    }
+
+
+    val x1Prop get() = state.dm.getX1Prop
+    val y1Prop get() = state.dm.getY1Prop
+    val x2Prop get() = state.dm.getX2Prop
+    val y2Prop get() = state.dm.getY2Prop
+
+    class ShapeModel(shape: Shape = EmptyShape) : ItemViewModel<Shape>(shape) {
+        val x1 = bind(Shape::x1Prop)
+        val y1 = bind(Shape::y1Prop)
+        val x2 = bind(Shape::x2Prop)
+        val y2 = bind(Shape::y2Prop)
+
+        val isEmptyShape = booleanBinding(itemProperty) {
+            item == EmptyShape
+        }
     }
 }

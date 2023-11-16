@@ -1,103 +1,132 @@
 package com.github.erotourtes.view
 
+import com.github.erotourtes.drawing.shape.EmptyShape
 import com.github.erotourtes.drawing.shape.Shape
+import com.github.erotourtes.drawing.shape.Shape.ShapeModel
+import com.github.erotourtes.utils.shapeStatesToJSON
+import javafx.beans.property.SimpleStringProperty
+import javafx.collections.ListChangeListener
+import javafx.geometry.Pos
+import javafx.stage.FileChooser
+import javafx.stage.StageStyle
 import tornadofx.*
-import kotlin.reflect.KProperty1
+import java.io.File
 
-class Table : View("Table") {
+class Form : View("Edit") {
     private val model by inject<CanvasModel>()
-    private val editorsInfoModel by inject<EditorsInfoModel>()
-    private val shapeModel: Shape.ShapeModel = Shape.ShapeModel(model.cc.emptyShape())
+    private val shapeModel by inject<ShapeModel>()
 
-    override val root = borderpane {
-        val data = model.sl.getObservableList()
+    override val root = form {
         val editorHandler = model.eh
-
-        top = button("Table of shapes") { action { println(data) } }
-
-        center = tableview<Shape> {
-            column("x1") {
-                it.value.model.x1
-                // TODO: WTF calls several times
-            }
-
-            items = data
-            onUserSelect(1, editorHandler.editor::highlight)
-
-            shapeModel.rebindOnChange(this) { item = it }
-        }
-
-        bottom = form {
-            fieldset("Selected Shape") {
-                field("x1: ") { textfield(shapeModel.x1) }
-                field("x2: ") { textfield(shapeModel.x2) }
-                field("y1: ") { textfield(shapeModel.y1) }
-                field("y2: ") { textfield(shapeModel.y2) }
+        hiddenWhen(shapeModel.isEmptyShape)
+        fieldset("Selected Shape") {
+            hbox {
+                style { alignment = Pos.CENTER }
                 button("Save") {
                     enableWhen(shapeModel.dirty)
-                    action { shapeModel.commit() }
+                    action {
+                        shapeModel.commit()
+                        with(editorHandler.editor) {
+                            redraw()
+                            highlight(shapeModel.item)
+                        }
+                    }
                 }
                 button("Reset") { action { shapeModel.rollback() } }
+                button("Delete") {
+                    action {
+                        with(editorHandler.editor) {
+                            shapeModel.item?.let {
+                                model.sl.remove(it)
+                                redraw()
+                            }
+                        }
+
+                        this@Form.close()
+                    }
+                }
+                button("Close") {
+                    action {
+                        shapeModel.item = EmptyShape
+                        this@Form.close()
+                    }
+                }
             }
+            field("x1: ") { textfield(shapeModel.x1) }
+            field("x2: ") { textfield(shapeModel.x2) }
+            field("y1: ") { textfield(shapeModel.y1) }
+            field("y2: ") { textfield(shapeModel.y2) }
         }
     }
-
 }
-/*
+
+class TableController : Controller() {
+    private val model by inject<CanvasModel>()
+    private var file: File? = null
+    private val listener = ListChangeListener<Shape> {
+        file?.writeText(shapeStatesToJSON(model.sl.getStatesList()))
+    }
+
+    var fileNameProp = SimpleStringProperty()
+    private var fileName by fileNameProp
+
+    val data get() = model.sl.getObservableList()
+
+    fun highlight(shape: Shape) {
+        model.eh.editor.highlight(shape)
+    }
+
+    fun selectFile() {
+        file = getFile()
+        fileName = file?.name ?: "No file selected"
+    }
+
+    fun autoSave(isSelected: Boolean) {
+        if (isSelected) {
+            data.addListener(listener)
+            listener.onChanged(null)
+        } else data.removeListener(listener)
+    }
+
+    private fun getFile() = chooseFile(
+        "Choose file...",
+        filters = arrayOf(
+            FileChooser.ExtensionFilter("JSON", "*.json"),
+            FileChooser.ExtensionFilter("ALL", "*.*"),
+        ),
+        mode = FileChooserMode.Single,
+    ).firstOrNull()
+}
+
 class Table : View("Table") {
-    override val root = tableview {
-//        readonlyColumn("Name", EditorInfo::name)
-//        readonlyColumn("x1", )
-//        readonlyColumn("x2", EditorInfo::tooltip)
-//        readonlyColumn("y1", EditorInfo::tooltip)
-//        readonlyColumn("y2", EditorInfo::tooltip)
-//        column("Icon", EditorInfo::icon)
-//        val list = find<CanvasModel>().sl
-        val a = Person("Mike", 42)
-        val list = listOf(
-            a,
-            Person("John", 42, a),
-            Person("Jane", 36),
-        )
+    private val ctrl by inject<TableController>()
+    private val shapeModel by inject<ShapeModel>()
 
-        column("Name", Person::getNameProp).makeEditable()
-        readonlyColumn("Age", Person::age)
-        column<Person, String>("Parent name") {
-            it.value.parrent?.getNameProp() ?: SimpleStringProperty()
-        }.makeEditable()
-//        column("Parent name", Person::getParentProp).cellFormat {
-//            // doesn't update parent if changed trhough child
-//            textProperty().bind(it?.getParentProp()?.value?.getNameProp() ?: SimpleStringProperty())
-//        }
+    override val root = borderpane {
+        center = tableview<Shape> {
+            column("x1") { it.value.x1Prop }
+            column("y1") { it.value.y1Prop }
+            column("x2") { it.value.x2Prop }
+            column("y2") { it.value.y2Prop }
 
-        column<Person, String>("Parent name") {
-            it.value.getParentProp().select {
-                if (it != null)
-                    return@select it.getNameProp()
-                else return@select SimpleStringProperty()
+            items = ctrl.data
+            onUserSelect(1) {
+                find<Form>().openModal(
+                    stageStyle = StageStyle.UTILITY,
+                    escapeClosesWindow = true,
+                    owner = this@Table.currentWindow
+                )
+
+                ctrl.highlight(it)
+                shapeModel.item = it
             }
+//            shapeModel.rebindOnChange(this) { item = it }
         }
 
-        items = list.toList().asObservable()
+        bottom = hbox {
+            button("Select File") { action { ctrl.selectFile() } }
+            checkbox("Auto Save to file: ") { action { ctrl.autoSave(isSelected) } }
+            label { bind(ctrl.fileNameProp) }
+        }
     }
-
-    class Person(name: String, age: Int, parrent: Person? = null) {
-//        private val nameProp = SimpleStringProperty(name)
-//        fun getNameProp() = nameProp
-//        var name by nameProp
-
-
-
-
-        private val ageProp = SimpleIntegerProperty(age)
-        var age by ageProp
-
-        var parrentProp = SimpleObjectProperty(parrent)
-        fun getParentProp() = parrentProp
-        var parrent by parrentProp
-
-
-//        var arg by property("arg")
-//        fun getArgProp() = getProperty(Person::arg)
-    }
-}*/
+}
