@@ -38,7 +38,7 @@ abstract class Editor {
 
     protected open val shapesChangeListener = ListChangeListener<Shape> { redraw() }
 
-    private var isStillDrawing = false
+    protected var isStillDrawing = false
 
     open fun listenToEvents() {
         val c = gc.canvas

@@ -5,12 +5,14 @@ import com.github.erotourtes.utils.SingletonHolder
 import javafx.scene.input.MouseEvent
 
 class PointEditor private constructor() : Editor() {
-    override fun onMouseDragged(e: MouseEvent) {}
-
     override fun onMousePressed(e: MouseEvent) {
-        dm.setEnd(e.x, e.y)
-        super.onMousePressed(e)
-        shape.setDm(dm)
+        shape.setDm(dm.setEnd(e.x, e.y))
+        redraw()
+        previewLine()
+    }
+
+    override fun onMouseDragged(e: MouseEvent) {
+        onMousePressed(e)
     }
 
     override fun onMouseReleased(e: MouseEvent) {
@@ -19,8 +21,6 @@ class PointEditor private constructor() : Editor() {
 
         redraw()
     }
-
-    override fun previewLine() {}
 
     companion object : SingletonHolder<PointEditor>({ PointEditor() })
 }

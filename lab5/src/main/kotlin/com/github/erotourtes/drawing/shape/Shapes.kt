@@ -9,8 +9,9 @@ class Point(gc: GraphicsContext) : Shape(gc) {
     override fun draw() {
         val radius = 12.0
         gc.apply {
-            val (x, y) = dm.getBoundaries().first
+            val (x, y) = dm.getRaw().second
             fillOval(x, y, radius, radius)
+            strokeOval(x, y, radius, radius)
         }
     }
 }
