@@ -1,0 +1,349 @@
+@startuml
+
+!theme plain
+top to bottom direction
+skinparam linetype ortho
+
+class CanvasController {
+  + CanvasController(Canvas): 
+  + changeStrokeColor(Color): Unit
+  + changeStrokeWidth(Double): Unit
+  + changeFillColor(Color): Unit
+   snapshotImage: WritableImage
+   gcUpdate: SimpleBooleanProperty
+   updater: Boolean
+   strokeColorProp: SimpleObjectProperty<Color>
+   fillColorProp: SimpleObjectProperty<Color>
+}
+class CanvasModel {
+  + CanvasModel(): 
+   cc: CanvasController
+   eh: EditorHandler
+   sl: ShapesList
+   h: History
+}
+interface Command << interface >> {
+  + execute(): Unit
+  + undo(): Unit
+}
+class Companion {
+  + toEqual(Dimension): Dimension
+  + from(Double, Double, Double, Double): Dimension
+  + toCorner(Dimension): Dimension
+   serializer: DimensionSerializer
+}
+class Dimension {
+  + Dimension(): 
+  + copy(): Dimension
+  + toString(): String
+  + copyFrom(Dimension): Unit
+  + setStart(Double, Double): Dimension
+  + copyTo(Dimension): Unit
+  + setEnd(Double, Double): Dimension
+   getX2Prop: SimpleDoubleProperty
+   getY1Prop: SimpleDoubleProperty
+   getX1Prop: SimpleDoubleProperty
+   width: Double
+   raw: Pair<Point, Point>
+   getY2Prop: SimpleDoubleProperty
+   height: Double
+   y1: Double
+   x1: Double
+   y2: Double
+   boundaries: Pair<Point, Point>
+   x2: Double
+}
+class Editor {
+  + Editor(): 
+  + listenToEvents(): Unit
+  # onMousePressed(MouseEvent): Unit
+  # setHighlightProperties(): Unit
+  + highlight(Shape): Unit
+  - clear(): Unit
+  # onMouseDragged(MouseEvent): Unit
+  - drawAll(): Unit
+  # onMouseReleased(MouseEvent): Unit
+  + init(ShapesList, GraphicsContext, History, Shape): Unit
+  # onKeyPressed(KeyEvent): Unit
+  + redraw(): Unit
+  # changeProcessor(KeyEvent): Unit
+  # setPreviewProperties(): Unit
+  + disableEvents(): Unit
+  # onKeyReleased(KeyEvent): Unit
+  # previewLine(): Unit
+   stillDrawing: Boolean
+   dm: Dimension
+   curProcessor: DmProcessor
+   shapes: ShapesList
+   history: History
+   shape: Shape
+   shapesChangeListener: ListChangeListener<Shape>
+   processor: DmProcessor
+   altProcessor: DmProcessor
+   gc: GraphicsContext
+   ctrlProcessor: DmProcessor
+}
+class EditorHandler {
+  + EditorHandler(Map<Class<Shape>, Editor>): 
+  + isCurShapeActive(Pair<Class<Shape>, Editor>): Boolean
+  - getShape(Class<Shape>): Shape
+  + use(Pair<Class<Shape>, Editor>): Unit
+  + requestRedraw(): Unit
+  + listenToChanges(ChangeListener<Shape>): Unit
+   editor: Editor
+   curEditor: Editor
+   shape: Shape
+}
+class EditorsInfoData {
+  + EditorsInfoData(): 
+   editorsInfo: SimpleListProperty<EditorInfo>
+}
+class EditorsInfoModel {
+  + EditorsInfoModel(): 
+   editorsInfo: SimpleListProperty<EditorInfo>
+}
+class Form {
+  + Form(): 
+   shapeModel: ShapeModel
+   root: Form
+   model: CanvasModel
+}
+class History {
+  + History(): 
+  + redo(): Unit
+  + undo(): Unit
+  + add(Command): Unit
+}
+class MainController {
+  + MainController(): 
+  - populateEditors(): Unit
+  + populate(): Unit
+  + undo(): Unit
+  + bindCanvas(Pane): Unit
+  + redo(): Unit
+   eim: EditorsInfoModel
+   cm: CanvasModel
+}
+class MainView {
+  + MainView(): 
+   ctrl: MainController
+   root: BorderPane
+}
+class MenuController {
+  + MenuController(): 
+  + print(): Unit
+  + create(): Menu
+  - chooseFile(): File
+  - saveFile(): File
+  - shapeStatesFrom(File): List<ShapeState>
+  + openTable(): Unit
+  + new(): Unit
+  + open(): Unit
+  + exit(): Unit
+  + saveAs(): Unit
+   editorsInfoModel: EditorsInfoModel
+   model: CanvasModel
+}
+class MyApp {
+  + MyApp(): 
+}
+class MyMenu {
+  + MyMenu(): 
+   root: MenuBar
+   ctrl: MenuController
+}
+class Shape {
+  + Shape(): 
+  + draw(GraphicsContext, Dimension): Unit
+  + copy(): Shape
+  + getBounds(Dimension): Dimension
+  + drawWithState(GraphicsContext): Unit
+   copyState: ShapeState
+   dm: Dimension
+   y2Prop: SimpleDoubleProperty
+   x2Prop: SimpleDoubleProperty
+   GCStateWith: GraphicsContext
+   y1Prop: SimpleDoubleProperty
+   state: ShapeState
+   stateWith: ShapeState
+   copyDm: Dimension
+   x1Prop: SimpleDoubleProperty
+   bounds: Dimension
+}
+class ShapeStateSerializer {
+  + serialize(Encoder, ShapeState): Unit
+  + deserialize(Decoder): ShapeState
+   descriptor: SerialDescriptor
+}
+class ShapesList {
+  + ShapesList(): 
+  + toString(): String
+  + addListener(ListChangeListener<Shape>): Unit
+  + add(Shape): Unit
+  + addAll(List<Shape>): Unit
+  + clear(): Unit
+  + removeListener(ListChangeListener<Shape>): Unit
+  + iterator(): Iterator<Shape>
+  + remove(Shape): Unit
+   size: Int
+   observableList: ObservableList<Shape>
+   statesList: List<ShapeState>
+   list: List<Shape>
+}
+class Table<E, S> {
+  + Table(ObservableList<E>, List<Pair<String, (E) -> ObservableValue<S>>>): 
+   onUserSelectCb: (E) -> Unit
+   root: TableView<E>
+}
+class TableController {
+  + TableController(): 
+  + highlight(Shape): Unit
+  + autoSave(Boolean): Unit
+  + selectFile(): Unit
+   file: File
+   data: ObservableList<Shape>
+   fileNameProp: SimpleStringProperty
+   fileName: String
+   model: CanvasModel
+}
+class TableView {
+  + TableView(): 
+   shapeModel: ShapeModel
+   ctrl: TableController
+   root: BorderPane
+}
+class ToolBar {
+  + ToolBar(): 
+  + onDock(): Unit
+   ctrl: ToolBarController
+   root: FlowPane
+}
+class ToolBarController {
+  + ToolBarController(): 
+  - attach(): Unit
+  + changeMainColor(Color): Unit
+  + swapColors(): Unit
+  + listenToEditorChange(): Unit
+  + undo(): Unit
+  + changeStroke(Double): Unit
+  + create(): List<ToggleButton>
+  - detach(): Unit
+  + changeAuxColor(Color): Unit
+  + redo(): Unit
+  + toggle(): Unit
+   auxColorProp: SimpleObjectProperty<Color>
+   mainColorProp: SimpleObjectProperty<Color>
+   view: ToolBar
+   detached: Boolean
+   editorsInfoModel: EditorsInfoModel
+   model: CanvasModel
+}
+entity data  CanvasData << data >> {
+  + CanvasData(ShapesList, EditorHandler, History, CanvasController): 
+   editorHandler: EditorHandler
+   shapesList: ShapesList
+   canvasController: CanvasController
+   history: History
+}
+entity data  EditorInfo << data >> {
+  + EditorInfo(String, String, Pair<Class<Shape>, Editor>, FontAwesomeIcon?): 
+   name: String
+   icon: FontAwesomeIcon?
+   pair: Pair<Class<Shape>, Editor>
+   tooltip: String
+}
+entity data  Point << data >> {
+  + Point(Double, Double): 
+   x: Double
+   y: Double
+}
+entity data  ShapeState << data >> {
+  + ShapeState(String, Dimension, GCState): 
+  + toShape(): Shape
+   clazz: String
+   dm: Dimension
+   gcState: GCState
+}
+
+CanvasModel           -[#595959,dashed]->  CanvasController     
+CanvasModel           -[#595959,dashed]->  EditorHandler        
+CanvasModel           -[#595959,dashed]->  History              
+CanvasModel           -[#595959,dashed]->  ShapesList           
+CanvasModel           -[#595959,dashed]->  data  CanvasData     
+Companion             +-[#820000,plain]-  Dimension            
+Companion             -[#595959,dashed]->  Dimension            : "«create»"
+Dimension             -[#595959,dashed]->  Dimension            : "«create»"
+Dimension             -[#595959,dashed]->  data  Point          : "«create»"
+Editor                -[#595959,dashed]->  Companion            
+Editor                -[#595959,dashed]->  Dimension            : "«create»"
+Editor               "1" *-[#595959,plain]-> "dm\n1" Dimension            
+Editor                -[#595959,dashed]->  Editor               
+Editor               "1" *-[#595959,plain]-> "history\n1" History              
+Editor               "1" *-[#595959,plain]-> "_shape\n1" Shape                
+Editor               "1" *-[#595959,plain]-> "shapes\n1" ShapesList           
+EditorHandler        "1" *-[#595959,plain]-> "shapeMap\n*" Editor               
+EditorHandler         -[#595959,dashed]->  Shape                
+EditorsInfoData       -[#595959,dashed]->  data  EditorInfo     
+EditorsInfoModel      -[#595959,dashed]->  EditorsInfoData      
+Form                  -[#595959,dashed]->  CanvasModel          
+Form                  -[#595959,dashed]->  Form                 
+History              "1" *-[#595959,plain]-> "undoStack\n*" Command              
+MainController        -[#595959,dashed]->  CanvasController     : "«create»"
+MainController        -[#595959,dashed]->  CanvasModel          
+MainController        -[#595959,dashed]->  EditorHandler        : "«create»"
+MainController       "1" *-[#595959,plain]-> "editorHandler\n1" EditorHandler        
+MainController        -[#595959,dashed]->  EditorsInfoModel     
+MainController        -[#595959,dashed]->  History              : "«create»"
+MainController       "1" *-[#595959,plain]-> "history\n1" History              
+MainController        -[#595959,dashed]->  ShapesList           : "«create»"
+MainController       "1" *-[#595959,plain]-> "shapeList\n1" ShapesList           
+MainController        -[#595959,dashed]->  data  CanvasData     : "«create»"
+MainController       "1" *-[#595959,plain]-> "editorsInfo\n*" data  EditorInfo     
+MainController        -[#595959,dashed]->  data  EditorInfo     : "«create»"
+MainView              -[#595959,dashed]->  MainController       
+MainView              -[#595959,dashed]->  MyMenu               
+MainView              -[#595959,dashed]->  ToolBar              
+MenuController        -[#595959,dashed]->  CanvasModel          
+MenuController        -[#595959,dashed]->  EditorsInfoModel     
+MenuController        -[#595959,dashed]->  MainView             
+MenuController        -[#595959,dashed]->  TableView            
+MenuController        -[#595959,dashed]->  data  EditorInfo     
+MenuController        -[#595959,dashed]->  data  ShapeState     
+MyApp                 -[#595959,dashed]->  MainView             
+MyMenu                -[#595959,dashed]->  MenuController       
+Shape                 -[#595959,dashed]->  Dimension            : "«create»"
+Shape                 -[#595959,dashed]->  Shape                
+Shape                 -[#595959,dashed]->  data  ShapeState     : "«create»"
+Shape                "1" *-[#595959,plain]-> "state\n1" data  ShapeState     
+ShapeStateSerializer  -[#595959,dashed]->  Companion            
+ShapeStateSerializer  -[#595959,dashed]->  Dimension            
+ShapeStateSerializer  -[#595959,dashed]->  data  ShapeState     : "«create»"
+ShapesList           "1" *-[#595959,plain]-> "shapeArr\n*" Shape                
+ShapesList            -[#595959,dashed]->  data  ShapeState     
+TableController       -[#595959,dashed]->  CanvasModel          
+TableController       -[#595959,dashed]->  Shape                
+TableView             -[#595959,dashed]->  Form                 
+TableView             -[#595959,dashed]->  Shape                
+TableView            "1" *-[#595959,plain]-> "table\n1" Table                
+TableView             -[#595959,dashed]->  Table                : "«create»"
+TableView             -[#595959,dashed]->  TableController      
+TableView             -[#595959,dashed]->  TableView            
+ToolBar               -[#595959,dashed]->  ToolBar              
+ToolBar               -[#595959,dashed]->  ToolBarController    
+ToolBarController     -[#595959,dashed]->  CanvasModel          
+ToolBarController     -[#595959,dashed]->  EditorsInfoModel     
+ToolBarController     -[#595959,dashed]->  MainView             
+ToolBarController    "1" *-[#595959,plain]-> "toolBar\n1" ToolBar              
+ToolBarController     -[#595959,dashed]->  ToolBarController    
+ToolBarController     -[#595959,dashed]->  data  EditorInfo     
+data  CanvasData     "1" *-[#595959,plain]-> "canvasController\n1" CanvasController     
+data  CanvasData     "1" *-[#595959,plain]-> "editorHandler\n1" EditorHandler        
+data  CanvasData     "1" *-[#595959,plain]-> "history\n1" History              
+data  CanvasData     "1" *-[#595959,plain]-> "shapesList\n1" ShapesList           
+data  EditorInfo      -[#595959,dashed]->  Editor               
+data  EditorInfo      -[#595959,dashed]->  Shape                
+data  Point           +-[#820000,plain]-  Dimension            
+data  ShapeState     "1" *-[#595959,plain]-> "dm\n1" Dimension            
+data  ShapeState      -[#595959,dashed]->  Shape                
+data  ShapeState      -[#595959,dashed]->  data  ShapeState     : "«create»"
+@enduml

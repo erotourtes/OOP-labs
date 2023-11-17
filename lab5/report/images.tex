@@ -1,14 +1,24 @@
 \subsection{Images}
 
 \begin{figure}[H]
-    \includegraphics[width=8cm]{img}
+    % include img so it would fit the page
+    \includegraphics[width=\textwidth,keepaspectratio]{img}
     \centering
 \end{figure}
 
 \subsection{UML}
 \begin{figure}[H]
-    \includegraphics[width=16cm]{Shapes}
-    \includegraphics[width=16cm]{Editors}
+    \begin{subfigure}{.5\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{Shapes}
+        \caption{Shapes}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{.5\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{Editors}
+        \caption{Editors}
+    \end{subfigure}
 \end{figure}
 
 \includepdf[pages=-]{./images/uml.pdf}
