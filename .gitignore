@@ -3,6 +3,8 @@ code-getter/main
 
 out
 
+**/*.local.*
+
 # pdf aux ignore
 */report/*.acn
 */report/*.acr
