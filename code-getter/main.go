@@ -67,24 +67,24 @@ func copyReport(toLab string) {
 	// Doesnt check if dir is exists
 	reportDst := getReportPath(toLab)
 	if _, err := os.Stat(reportDst); !os.IsNotExist(err) {
-		fmt.Printf("Directory %v exists, skipping copying\n", reportDst)
+		fmt.Printf("Skipping(Directory) %v exists\n", reportDst)
 		return
 	}
 
-  err = os.Mkdir(reportDst, os.ModePerm)
-  if err != nil {
-      println("Error creating directory, maybe lab dir is not exists")
-      os.Exit(1)
-  }
+	err = os.Mkdir(reportDst, os.ModePerm)
+	if err != nil {
+		println("Error creating directory, maybe lab dir is not exists")
+		os.Exit(1)
+	}
 
 	println("Created report dir", reportDst)
 	for _, srcEntry := range reportSrc {
-    if (contains(EXCLUDE_FILES, srcEntry.Name())) {
-      println("Skipping", srcEntry.Name())
-      continue
-    }
+		if contains(EXCLUDE_FILES, srcEntry.Name()) {
+			println("Skipping", srcEntry.Name())
+			continue
+		}
 		src, err := os.Open(filepath.Join(REPORT_PATH, filepath.Base(srcEntry.Name())))
-    defer src.Close()
+		defer src.Close()
 		check(err)
 
 		dst, err := os.Create(filepath.Join(reportDst, filepath.Base(src.Name())))
@@ -99,12 +99,12 @@ func copyReport(toLab string) {
 }
 
 func contains(slice []string, value string) bool {
-  for _, item := range slice {
-    if item == value {
-      return true
-    }
-  }
-  return false
+	for _, item := range slice {
+		if item == value {
+			return true
+		}
+	}
+	return false
 }
 
 func pasteCode(toLab string) []string {
@@ -128,6 +128,10 @@ func pasteCode(toLab string) []string {
 func sortByPackage(files []string) map[string][]string {
 	sortedFiles := make(map[string][]string)
 	for _, file := range files {
+    if (!strings.HasSuffix(file, ".kt") && !strings.HasSuffix(file, ".java")) {
+      fmt.Printf("Skipping %v\n", file)
+      continue
+    }
 		packageName := getPackageName(file)
 		sortedFiles[packageName] = append(sortedFiles[packageName], file)
 	}
