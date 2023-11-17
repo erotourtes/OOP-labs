@@ -53,7 +53,14 @@ class MenuController : Controller() {
             tempPath.toFile()
         )
 
-        Desktop.getDesktop().open(tempPath.toFile())
+        runAsync {
+            try {
+                val desktop = if (Desktop.isDesktopSupported()) Desktop.getDesktop() else null
+                desktop?.open(tempPath.toFile())
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
     }
 
     fun exit() = Platform.exit()
