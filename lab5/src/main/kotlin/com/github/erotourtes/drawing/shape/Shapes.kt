@@ -57,14 +57,14 @@ class Dumbbell : Shape() {
             val hr = radius / 2
             val (start, end) = dm.getRaw()
 
+            line.draw(gc, dm)
+
             with(ellipse) {
                 val d = Dimension
 
                 draw(gc, d.from(start.x - hr, start.y - hr, start.x + hr, start.y + hr))
                 draw(gc, d.from(end.x - hr, end.y - hr, end.x + hr, end.y + hr))
             }
-
-            line.draw(gc, dm)
         }
     }
 }
