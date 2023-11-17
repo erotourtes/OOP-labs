@@ -52,7 +52,7 @@ class Form : View("Edit") {
                     enableWhen(shapeModel.dirty)
                     action {
                         // TODO: bind redraw to changes in coordinates
-                        ChangeCoordinatesCommand(shapeModel, editorHandler.editor::redraw).apply {
+                        ChangeCoordinatesCommand(shapeModel, editorHandler::requestRedraw).apply {
                             execute()
                             model.h.add(this)
                         }

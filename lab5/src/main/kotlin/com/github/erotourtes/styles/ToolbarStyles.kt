@@ -19,7 +19,6 @@ class ToolbarStyles : Stylesheet() {
             padding = box(5.px)
             spacing = 5.px
             minHeight = toolbarHeight
-            maxHeight = toolbarHeight
             alignment = javafx.geometry.Pos.CENTER_LEFT
             borderWidth += box(0.px, 0.px, 1.px, 0.px)
             borderColor += box(dark)

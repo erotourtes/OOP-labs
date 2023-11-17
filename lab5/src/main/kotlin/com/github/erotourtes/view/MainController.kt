@@ -42,7 +42,7 @@ class MainController : Controller() {
         populateEditors()
 
         val maps = editorsInfo.associate { it.pair } + (EmptyShape.javaClass to EmptyEditor)
-        editorHandler = EditorHandler(canvas, maps).apply { use(EmptyShape) }
+        editorHandler = EditorHandler(maps)
 
         cm.item = CanvasData(shapeList, editorHandler, history, CanvasController(canvas))
         eim.editorsInfo.value = editorsInfo.asObservable()

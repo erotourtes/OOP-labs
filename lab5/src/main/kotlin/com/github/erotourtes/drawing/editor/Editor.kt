@@ -14,7 +14,7 @@ abstract class Editor {
     protected lateinit var shapes: ShapesList
     protected lateinit var gc: GraphicsContext
     protected lateinit var history: History
-    private lateinit var _shape: Shape
+    private var _shape: Shape = EmptyShape
 
     var shape: Shape
         get() = _shape
@@ -64,6 +64,7 @@ abstract class Editor {
     }
 
     protected open fun onMousePressed(e: MouseEvent) {
+        gc.canvas.requestFocus()
         redraw()
         dm.setStart(e.x, e.y)
         isStillDrawing = true
@@ -81,6 +82,7 @@ abstract class Editor {
         if (e.isDragDetect) return // returns if mouse was not dragged
         shape.setDm(curProcessor.process(dm))
 
+        shape.setGCStateWith(gc)
         val command = AddItemCommand(shapes, shape).also { it.execute() }
         history.add(command)
 
@@ -124,7 +126,6 @@ abstract class Editor {
 
     protected fun setPreviewProperties() {
         gc.setLineDashes(5.0)
-        gc.stroke = Color.BLACK
         gc.fill = Color.TRANSPARENT
     }
 

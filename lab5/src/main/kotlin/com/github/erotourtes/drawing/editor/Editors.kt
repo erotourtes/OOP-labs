@@ -16,6 +16,7 @@ class PointEditor private constructor() : Editor() {
     }
 
     override fun onMouseReleased(e: MouseEvent) {
+        shape.setGCStateWith(gc)
         val command = AddItemCommand(shapes, shape).also { it.execute() }
         history.add(command)
 

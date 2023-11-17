@@ -5,9 +5,11 @@ import com.github.erotourtes.styles.ToolbarStyles
 import com.github.erotourtes.utils.EditorInfo
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView
+import javafx.scene.control.SpinnerValueFactory
 import javafx.scene.control.ToggleButton
 import javafx.scene.control.ToggleGroup
 import javafx.scene.layout.BorderPane
+import javafx.scene.paint.Color
 import javafx.stage.StageStyle
 import tornadofx.*
 
@@ -57,6 +59,24 @@ class ToolBarController : Controller() {
 
     fun toggle() = if (isDetached) attach() else detach()
 
+    fun changeMainColor(color: Color) = model.cc.changeFillColor(color)
+
+    val mainColorProp = model.cc.fillColorProp
+    val auxColorProp = model.cc.strokeColorProp
+
+    fun changeAuxColor(color: Color) = model.cc.changeStrokeColor(color)
+
+    fun changeStroke(width: Double) = model.cc.changeStrokeWidth(width)
+
+    fun swapColors() {
+        val aux = auxColorProp.value
+        val main = mainColorProp.value
+        model.cc.also {
+            it.changeStrokeColor(main)
+            it.changeFillColor(aux)
+        }
+    }
+
     private fun attach() {
         isDetached = false
         val center = find<MainView>().root.center as BorderPane
@@ -79,7 +99,7 @@ class ToolBar : View() {
         ctrl.listenToEditorChange()
     }
 
-    override val root = hbox {
+    override val root = flowpane {
         addClass(ToolbarStyles.toolbar)
 
         button {
@@ -111,5 +131,30 @@ class ToolBar : View() {
         }
 
         ctrl.create().forEach { add(it) }
+
+        colorpicker {
+            addClass(ToolbarStyles.iconButton)
+            valueProperty().bindBidirectional(ctrl.mainColorProp)
+            setOnAction { ctrl.changeMainColor(value) }
+        }
+
+        colorpicker {
+            addClass(ToolbarStyles.iconButton)
+            valueProperty().bindBidirectional(ctrl.auxColorProp)
+            setOnAction { ctrl.changeAuxColor(value) }
+        }
+
+        button {
+            addClass(ToolbarStyles.iconButton)
+            graphic = FontAwesomeIconView(FontAwesomeIcon.EXCHANGE)
+
+            action { ctrl.swapColors() }
+        }
+
+        spinner<Double> {
+            addClass(ToolbarStyles.iconButton)
+            valueFactory = SpinnerValueFactory.DoubleSpinnerValueFactory(1.0, 10.0, 1.0)
+            valueProperty().addListener { _, _, new -> ctrl.changeStroke(new) }
+        }
     }
 }

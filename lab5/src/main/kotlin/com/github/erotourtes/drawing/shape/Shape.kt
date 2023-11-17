@@ -46,7 +46,9 @@ abstract class Shape {
     fun setStateWith(state: ShapeState) {
         this.state = state
     }
-
+    fun setGCStateWith(gc: GraphicsContext) {
+        state.gcState = GCState.from(gc)
+    }
 
     val x1Prop get() = state.dm.getX1Prop
     val y1Prop get() = state.dm.getY1Prop
