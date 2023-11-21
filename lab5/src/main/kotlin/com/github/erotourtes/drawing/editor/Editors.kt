@@ -2,6 +2,7 @@ package com.github.erotourtes.drawing.editor
 
 import com.github.erotourtes.drawing.history.AddItemCommand
 import com.github.erotourtes.utils.SingletonHolder
+import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseEvent
 
 class PointEditor private constructor() : Editor() {

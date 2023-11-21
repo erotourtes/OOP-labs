@@ -26,6 +26,7 @@ class Table<E, S>(
 
     val root
         get() = TableView<E>().apply {
+            columnResizePolicy = TableView.CONSTRAINED_RESIZE_POLICY
             columnsData.forEach {
                 val (name, gerObservable) = it
                 column(name) { value -> gerObservable(value.value) }
@@ -51,7 +52,6 @@ class Form : View("Edit") {
                 button("Save") {
                     enableWhen(shapeModel.dirty)
                     action {
-                        // TODO: bind redraw to changes in coordinates
                         ChangeCoordinatesCommand(shapeModel, editorHandler::requestRedraw).apply {
                             execute()
                             model.h.add(this)
