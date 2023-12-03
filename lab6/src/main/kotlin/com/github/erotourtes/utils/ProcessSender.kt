@@ -1,4 +1,4 @@
-package com.github.erotourtes.process_communicators
+package com.github.erotourtes.utils
 
 class ProcessSender(val process: Process) {
     private val outputStream = process.outputStream.bufferedWriter()

@@ -13,27 +13,31 @@ class DialogView : View("Set Properties") {
             fieldset {
                 field("Input n value") {
                     textfield {
-                        bind(model.nValueProp)
+                        bind(model.nProp)
                         filterInput { it.controlNewText.isInt() }
                     }
                 }
                 field("Input min value") {
                     textfield {
-                        bind(model.minValueProp)
-                        filterInput { it.controlNewText.isInt() }
+                        bind(model.minProp)
+                        filterInput { it.controlNewText.isDouble() }
                     }
                 }
                 field("Input max value") {
                     textfield {
-                        bind(model.maxValueProp)
-                        filterInput { it.controlNewText.isInt() }
+                        bind(model.maxProp)
+                        filterInput { it.controlNewText.isDouble() }
                     }
                 }
             }
         }
 
         button("Apply").action {
-            model.commit()
+            with(model) {
+                if (min > max) minProp.value = max.apply { maxProp.value = min }
+
+                commit()
+            }
             close()
         }
     }

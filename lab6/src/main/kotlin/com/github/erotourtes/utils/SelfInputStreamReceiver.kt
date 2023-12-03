@@ -1,4 +1,4 @@
-package com.github.erotourtes.process_communicators
+package com.github.erotourtes.utils
 
 import javafx.application.Platform
 import javafx.beans.property.SimpleStringProperty
@@ -6,7 +6,7 @@ import java.io.BufferedReader
 import java.io.InputStreamReader
 import kotlin.concurrent.thread
 
-class ProcessSelfReceiver {
+class SelfInputStreamReceiver {
     val inputMessage = SimpleStringProperty()
 
     private val reader = BufferedReader(InputStreamReader(System.`in`))

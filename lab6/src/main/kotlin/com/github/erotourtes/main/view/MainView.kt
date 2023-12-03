@@ -2,11 +2,13 @@ package com.github.erotourtes.main.view
 
 import com.github.erotourtes.data.MainModel
 import com.github.erotourtes.data.MainState
-import com.github.erotourtes.process_communicators.ProcessSender
-import javafx.stage.FileChooser
+import com.github.erotourtes.utils.DESTROY
+import com.github.erotourtes.utils.ProcessSender
+import com.github.erotourtes.utils.runJarFile
 import javafx.stage.StageStyle
 import javafx.stage.Window
 import tornadofx.*
+import java.io.File
 
 class MainController : Controller() {
     private var state = MainState()
@@ -24,15 +26,16 @@ class MainController : Controller() {
 
     fun runJar(window: Window?) {
         if (pc == null) {
-            val file = FileChooser().apply {
-                title = "Select jar file"
-                extensionFilters.add(FileChooser.ExtensionFilter("Jar files", "*.jar"))
-            }.showOpenDialog(window) ?: return
+            val path = "/home/sirmax/Files/Documents/projects/kotlin/oop-labs-creating-last-step/lab6/out/artifacts/First_jar/tornadofx-maven-project.jar"
+            val file = File(path)
+//            val file = FileChooser().apply {
+//                title = "Select jar file"
+//                extensionFilters.add(FileChooser.ExtensionFilter("Jar files", "*.jar"))
+//            }.showOpenDialog(window) ?: return
 
-            val java = "${System.getProperty("java.home")}/bin/java"
-            val path = file.absolutePath
-            val process = Runtime.getRuntime().exec("$java -jar $path")
-            pc = ProcessSender(process)
+            runJarFile(file)?.let {
+                pc = ProcessSender(it)
+            }
         }
 
         pc?.writeMessage(state.toString())
@@ -40,6 +43,7 @@ class MainController : Controller() {
 
     fun dispose() {
         pc?.let {
+            it.writeMessage(DESTROY)
             it.close()
             it.process.destroy()
         }
@@ -60,13 +64,13 @@ class MainView : View("Main") {
         borderpane {
             left = vbox {
                 label("n") {
-                    bind(model.nValueProp.stringBinding { "n = $it" })
+                    bind(model.nProp.stringBinding { "n = $it" })
                 }
                 label("min") {
-                    bind(model.minValueProp.stringBinding { "min = $it" })
+                    bind(model.minProp.stringBinding { "min = $it" })
                 }
                 label("max") {
-                    bind(model.maxValueProp.stringBinding { "max = $it" })
+                    bind(model.maxProp.stringBinding { "max = $it" })
                 }
             }
 
@@ -76,10 +80,5 @@ class MainView : View("Main") {
                 }
             }
         }
-    }
-
-    override fun onDelete() {
-        ctrl.dispose()
-        super.onDelete()
     }
 }
