@@ -21,4 +21,19 @@ class MainModel : ItemViewModel<MainState>() {
     val n by nValueProp
 }
 
-data class MainState(var n: Int = 0, var minValue: Double = 0.0, var maxValue: Double = 0.0)
+data class MainState(var n: Int = 0, var minValue: Double = 0.0, var maxValue: Double = 0.0) {
+    override fun toString(): String {
+        return "$n $minValue $maxValue"
+    }
+
+    companion object {
+        fun fromString(string: String): MainState? {
+            return try {
+                val values = string.split(" ")
+                MainState(values[0].toInt(), values[1].toDouble(), values[2].toDouble())
+            } catch (e: Exception) {
+                null
+            }
+        }
+    }
+}

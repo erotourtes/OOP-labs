@@ -2,75 +2,47 @@ package com.github.erotourtes.main.view
 
 import com.github.erotourtes.data.MainModel
 import com.github.erotourtes.data.MainState
+import com.github.erotourtes.process_communicators.ProcessSender
 import javafx.stage.FileChooser
 import javafx.stage.StageStyle
 import javafx.stage.Window
 import tornadofx.*
 
 class MainController : Controller() {
-    private val dialog: DialogView by inject()
-    private val model: MainModel by inject()
     private var state = MainState()
+    private val model: MainModel by inject()
+    private var pc: ProcessSender? = null
 
     init {
         model.item = state
     }
 
     fun showDialog() {
+        val dialog = find<DialogView>()
         dialog.openModal(stageStyle = StageStyle.UTILITY)
     }
 
     fun runJar(window: Window?) {
-        val file = FileChooser().apply {
-            title = "Select jar file"
-            extensionFilters.add(FileChooser.ExtensionFilter("Jar files", "*.jar"))
-        }.showOpenDialog(window) ?: return
+        if (pc == null) {
+            val file = FileChooser().apply {
+                title = "Select jar file"
+                extensionFilters.add(FileChooser.ExtensionFilter("Jar files", "*.jar"))
+            }.showOpenDialog(window) ?: return
 
-        val java = "${System.getProperty("java.home")}/bin/java"
-        val path = file.absolutePath
-
-        val process = Runtime.getRuntime().exec("$java -jar $path")
-        process.waitFor()
-    }
-}
-
-class DialogView : View("Set Properties") {
-    private val model by inject<MainModel>()
-
-    override val root = vbox {
-        label("Dialog")
-
-        form {
-            fieldset {
-                field("Input n value") {
-                    textfield {
-                        bind(model.nValueProp)
-                        filterInput { it.controlNewText.isInt() }
-                    }
-                }
-                field("Input min value") {
-                    textfield {
-                        bind(model.minValueProp)
-                        filterInput { it.controlNewText.isInt() }
-                    }
-                }
-                field("Input max value") {
-                    textfield {
-                        bind(model.maxValueProp)
-                        filterInput { it.controlNewText.isInt() }
-                    }
-                }
-            }
+            val java = "${System.getProperty("java.home")}/bin/java"
+            val path = file.absolutePath
+            val process = Runtime.getRuntime().exec("$java -jar $path")
+            pc = ProcessSender(process)
         }
 
-        button("Close").action {
-            model.commit()
-            close()
-        }
+        pc?.writeMessage(state.toString())
     }
 
-    init {
-        primaryStage.isAlwaysOnTop = true
+    fun dispose() {
+        pc?.let {
+            it.close()
+            it.process.destroy()
+        }
     }
 }
 
@@ -105,5 +77,9 @@ class MainView : View("Main") {
             }
         }
     }
-}
 
+    override fun onDelete() {
+        ctrl.dispose()
+        super.onDelete()
+    }
+}
