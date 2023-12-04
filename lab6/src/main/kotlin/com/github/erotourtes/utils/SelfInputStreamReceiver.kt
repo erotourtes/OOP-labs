@@ -17,26 +17,30 @@ class SelfInputStreamReceiver {
     init {
         val processId = ManagementFactory.getRuntimeMXBean().name
         readerThread = thread(start = true, isDaemon = false) {
-            runNotify("$processId read stream SelfInputStreamReceiver")
+            logger("$processId read stream SelfInputStreamReceiver")
             while (isReading.get() && !Thread.currentThread().isInterrupted) {
                 if (!reader.ready()) {
-                    Thread.sleep(100)
+                    val res = runCatching { Thread.sleep(100) }
+                    if (res.isFailure) {
+                        logger("$processId interrupted SelfInputStreamReceiver")
+                        break
+                    }
                     continue
                 }
                 val input = reader.readLine()
                 Platform.runLater {
-                    inputMessage.value = EMPTY
+                    if (input == inputMessage.value) inputMessage.value = EMPTY
                     inputMessage.value = input
                 }
             }
-            runNotify("$processId interrupted SelfInputStreamReceiver")
+            logger("$processId interrupted SelfInputStreamReceiver")
         }
     }
 
     fun close() {
         isReading.set(false)
         reader.close()
-        readerThread?.interrupt()
+        readerThread?.interrupt() // TODO: fix it is not interrupting
         readerThread?.join()
         inputMessage.value = null
 

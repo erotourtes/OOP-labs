@@ -3,7 +3,7 @@ package com.github.erotourtes.second
 import com.github.erotourtes.utils.DESTROY
 import com.github.erotourtes.utils.EMPTY
 import com.github.erotourtes.utils.SelfInputStreamReceiver
-import com.github.erotourtes.utils.runNotify
+import com.github.erotourtes.utils.logger
 import javafx.application.Platform
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
@@ -12,7 +12,7 @@ import tornadofx.*
 
 class SecondApp : App(SecondView::class) {
     override fun stop() {
-        runNotify("SecondApp(stop)")
+        logger("SecondApp(stop)")
         find<SecondController>().dispose()
     }
 }
@@ -23,7 +23,7 @@ class SecondController : Controller() {
 
     init {
         pReceiver.inputMessage.addListener { _, _, newValue ->
-            runNotify("SecondApp(message): $newValue")
+            logger("SecondApp(message): $newValue")
             if (newValue == EMPTY) return@addListener
             if (newValue == DESTROY || newValue == null) {
                 /*
@@ -42,7 +42,7 @@ class SecondController : Controller() {
     }
 
     fun dispose() {
-        runNotify("SecondApp(destroy)")
+        logger("SecondApp(destroy)")
         pReceiver.close()
     }
 }

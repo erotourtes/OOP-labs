@@ -8,17 +8,17 @@ import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import tornadofx.*
 import java.io.File
-import kotlin.system.exitProcess
 
 class FirstApp : App(FirstView::class) {
     override fun stop() {
-        runNotify("FirstApp(stop)")
+        logger("FirstApp(stop)")
         find<FirstController>().dispose()
     }
 }
 
 class FirstController : Controller() {
     private val pReceiver = SelfInputStreamReceiver()
+    private var pOutReceiver: ProcessReceiver? = null
     private var pSender: ProcessSender? = null
     private var state = MainState()
 
@@ -27,7 +27,7 @@ class FirstController : Controller() {
 
     init {
         pReceiver.inputMessage.addListener { _, _, newMsg ->
-            runNotify("FirstApp(read): $newMsg")
+            logger("FirstApp(read): $newMsg")
             if (newMsg == EMPTY) return@addListener
             if (newMsg == DESTROY || newMsg == null) {
                 dispose()
@@ -41,7 +41,7 @@ class FirstController : Controller() {
 
             regenerateDiapason()
 
-            runNotify("FirstApp(check): $state ${pSender?.isAlive}")
+            logger("FirstApp(check): $state ${pSender?.isAlive}")
             if (pSender == null || !pSender!!.isAlive) initChildProcess()
             pSender?.writeMessage(randoms.joinToString(separator = ","))
         }
@@ -58,11 +58,15 @@ class FirstController : Controller() {
     }
 
     private fun initChildProcess() {
-        runNotify("FirstApp(CHILDPROCESS)")
+        logger("FirstApp(CHILDPROCESS)")
         val path =
             "/home/sirmax/Files/Documents/projects/kotlin/oop-labs-creating-last-step/lab6/out/artifacts/Second_jar/tornadofx-maven-project.jar"
         runJarFile(File(path))?.let {
+            pSender?.close()
             pSender = ProcessSender(it)
+
+            pOutReceiver?.close()
+            pOutReceiver = ProcessReceiver(it)
         }
     }
 
@@ -76,12 +80,12 @@ class FirstController : Controller() {
 
     fun dispose() {
         pSender?.let {
-            runNotify("FirstApp(send): $DESTROY")
+            logger("FirstApp(send): $DESTROY")
             it.writeMessage(DESTROY)
             it.close()
             it.process.destroy()
         }
-        runNotify("FirstApp(DESTROY)")
+        logger("FirstApp(DESTROY)")
         pReceiver.close()
     }
 }

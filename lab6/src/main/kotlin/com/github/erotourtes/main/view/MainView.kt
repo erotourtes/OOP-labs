@@ -2,19 +2,16 @@ package com.github.erotourtes.main.view
 
 import com.github.erotourtes.data.MainModel
 import com.github.erotourtes.data.MainState
-import com.github.erotourtes.utils.DESTROY
-import com.github.erotourtes.utils.ProcessSender
-import com.github.erotourtes.utils.runJarFile
-import com.github.erotourtes.utils.runNotify
+import com.github.erotourtes.utils.*
 import javafx.stage.StageStyle
 import tornadofx.*
 import java.io.File
-import kotlin.concurrent.thread
 
 class MainController : Controller() {
     private var state = MainState()
     private val model: MainModel by inject()
     private var pSender: ProcessSender? = null
+    private var pOutReceiver: ProcessReceiver? = null
 
     init {
         model.item = state
@@ -35,25 +32,28 @@ class MainController : Controller() {
         if (pSender == null || !pSender!!.isAlive) initChildProcess()
 
         pSender?.writeMessage(state.toString())
-        runNotify("MainApp(write): $state")
+        logger("MainApp(write): $state")
     }
 
     private fun initChildProcess() {
-        runNotify("MainApp(CHILDPROCESS)")
+        logger("MainApp(CHILDPROCESS)")
         val path =
             "/home/sirmax/Files/Documents/projects/kotlin/oop-labs-creating-last-step/lab6/out/artifacts/First_jar/tornadofx-maven-project.jar"
         runJarFile(File(path))?.let {
+            pSender?.close()
             pSender = ProcessSender(it)
+            pOutReceiver = ProcessReceiver(it)
         }
     }
 
-    private fun dispose() {
+    fun dispose() {
         pSender?.let {
-            runNotify("MainApp(write): $DESTROY")
+            logger("MainApp(write): $DESTROY")
             it.writeMessage(DESTROY)
             it.process.destroy()
             it.close()
         }
+        pOutReceiver?.close()
     }
 }
 
