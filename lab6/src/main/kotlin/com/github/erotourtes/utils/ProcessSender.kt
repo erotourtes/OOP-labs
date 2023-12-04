@@ -12,4 +12,7 @@ class ProcessSender(val process: Process) {
     fun close() {
         outputStream.close()
     }
+
+    val isAlive: Boolean
+        get() = process.isAlive
 }

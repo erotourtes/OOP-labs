@@ -13,4 +13,5 @@ fun runNotify(message: String) {
     File(tempPath).appendText("$message\n")
 }
 
-const val DESTROY = "destroy"
+const val DESTROY = "__destroy__"
+const val EMPTY = "__EMPTY__"

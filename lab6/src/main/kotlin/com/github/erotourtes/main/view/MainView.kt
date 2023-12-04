@@ -7,7 +7,6 @@ import com.github.erotourtes.utils.ProcessSender
 import com.github.erotourtes.utils.runJarFile
 import com.github.erotourtes.utils.runNotify
 import javafx.stage.StageStyle
-import javafx.stage.Window
 import tornadofx.*
 import java.io.File
 import kotlin.concurrent.thread
@@ -15,7 +14,7 @@ import kotlin.concurrent.thread
 class MainController : Controller() {
     private var state = MainState()
     private val model: MainModel by inject()
-    private var pc: ProcessSender? = null
+    private var pSender: ProcessSender? = null
 
     init {
         model.item = state
@@ -32,34 +31,28 @@ class MainController : Controller() {
         dialog.openModal(stageStyle = StageStyle.UTILITY)
     }
 
-    fun runJar(window: Window?) {
-        if (pc == null) {
-            val path =
-                "/home/sirmax/Files/Documents/projects/kotlin/oop-labs-creating-last-step/lab6/out/artifacts/First_jar/tornadofx-maven-project.jar"
-            val file = File(path)
-//            val file = FileChooser().apply {
-//                title = "Select jar file"
-//                extensionFilters.add(FileChooser.ExtensionFilter("Jar files", "*.jar"))
-//            }.showOpenDialog(window) ?: return
+    fun send() {
+        if (pSender == null || !pSender!!.isAlive) initChildProcess()
 
-            runJarFile(file)?.let {
-                pc = ProcessSender(it)
-            }
-        }
-
-        pc?.writeMessage(state.toString())
+        pSender?.writeMessage(state.toString())
+        runNotify("MainApp(write): $state")
     }
 
-    fun dispose() {
-        pc?.let {
-            runNotify("Main App write message: $DESTROY")
-            it.writeMessage(DESTROY)
-            thread {
-                it.close()
-                it.process.destroy()
-            }
+    private fun initChildProcess() {
+        runNotify("MainApp(CHILDPROCESS)")
+        val path =
+            "/home/sirmax/Files/Documents/projects/kotlin/oop-labs-creating-last-step/lab6/out/artifacts/First_jar/tornadofx-maven-project.jar"
+        runJarFile(File(path))?.let {
+            pSender = ProcessSender(it)
+        }
+    }
 
-            it.process.waitFor()
+    private fun dispose() {
+        pSender?.let {
+            runNotify("MainApp(write): $DESTROY")
+            it.writeMessage(DESTROY)
+            it.process.destroy()
+            it.close()
         }
     }
 }
@@ -90,7 +83,7 @@ class MainView : View("Main") {
 
             center = vbox {
                 button("RUN").action {
-                    ctrl.runJar(this@MainView.currentWindow)
+                    ctrl.send()
                 }
             }
         }
