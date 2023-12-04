@@ -2,22 +2,14 @@ package com.github.erotourtes.first
 
 import com.github.erotourtes.data.MainModel
 import com.github.erotourtes.data.MainState
-import com.github.erotourtes.utils.DESTROY
-import com.github.erotourtes.utils.SelfInputStreamReceiver
-import com.github.erotourtes.utils.ProcessSender
-import com.github.erotourtes.utils.runJarFile
+import com.github.erotourtes.utils.*
 import javafx.application.Platform
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import tornadofx.*
 import java.io.File
 
-class FirstApp : App(FirstView::class) {
-    override fun stop() {
-        find<FirstController>().dispose()
-        super.stop()
-    }
-}
+class FirstApp : App(FirstView::class)
 
 class FirstController : Controller() {
     private val pReceiver = SelfInputStreamReceiver()
@@ -31,7 +23,11 @@ class FirstController : Controller() {
         pReceiver.run()
 
         pReceiver.inputMessage.addListener { _, _, newMsg ->
-            if (newMsg == DESTROY) Platform.exit()
+            runNotify("First App read message : $newMsg")
+            if (newMsg == DESTROY || newMsg == null) {
+                Platform.exit()
+                return@addListener
+            }
 
             val newState = MainState.fromString(newMsg) ?: return@addListener
             state = newState
@@ -45,8 +41,15 @@ class FirstController : Controller() {
     }
 
     init {
+        Runtime.getRuntime().addShutdownHook(Thread {
+            dispose()
+        })
+    }
+
+    init {
         // TODO: refactor
-        val path = "/home/sirmax/Files/Documents/projects/kotlin/oop-labs-creating-last-step/lab6/out/artifacts/Second_jar/tornadofx-maven-project.jar"
+        val path =
+            "/home/sirmax/Files/Documents/projects/kotlin/oop-labs-creating-last-step/lab6/out/artifacts/Second_jar/tornadofx-maven-project.jar"
         runJarFile(File(path))?.let {
             pSender = ProcessSender(it)
         }
@@ -60,9 +63,10 @@ class FirstController : Controller() {
             randoms.add(min + (max - min) * Math.random())
     }
 
-    fun dispose() {
+    private fun dispose() {
         pReceiver.close()
         pSender?.let {
+            runNotify("First App write message : $DESTROY")
             it.writeMessage(DESTROY)
             it.close()
             it.process.destroy()
@@ -79,10 +83,5 @@ class FirstView : View("First View") {
         label("max").bind(ctrl.model.maxProp.stringBinding { "max = $it" })
 
         listview(ctrl.randoms)
-    }
-
-    override fun onDelete() {
-        ctrl.dispose()
-        super.onDelete()
     }
 }

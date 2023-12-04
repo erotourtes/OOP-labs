@@ -2,17 +2,13 @@ package com.github.erotourtes.second
 
 import com.github.erotourtes.utils.DESTROY
 import com.github.erotourtes.utils.SelfInputStreamReceiver
+import com.github.erotourtes.utils.runNotify
 import javafx.application.Platform
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import tornadofx.*
 
-class SecondApp : App(SecondView::class) {
-    override fun stop() {
-        find<SecondController>().dispose()
-        super.stop()
-    }
-}
+class SecondApp : App(SecondView::class)
 
 class SecondController : Controller() {
     private val pReceiver = SelfInputStreamReceiver()
@@ -22,7 +18,11 @@ class SecondController : Controller() {
         pReceiver.run()
 
         pReceiver.inputMessage.addListener { _, _, newValue ->
-            if (newValue == DESTROY) Platform.exit()
+            runNotify("Second App read message : $newValue")
+            if (newValue == DESTROY || newValue == null) {
+                Platform.exit()
+                return@addListener
+            }
 
             val list = if (newValue.isEmpty()) emptyList() else newValue.splitToSequence(",")
                 .map { it.trimIndent().toDouble() }.sorted().toList()
@@ -31,8 +31,15 @@ class SecondController : Controller() {
         }
     }
 
+    init {
+        Runtime.getRuntime().addShutdownHook(Thread {
+            dispose()
+        })
+    }
+
     fun dispose() {
         pReceiver.close()
+        runNotify("Destroying SecondApp")
     }
 }
 

@@ -5,10 +5,12 @@ import com.github.erotourtes.data.MainState
 import com.github.erotourtes.utils.DESTROY
 import com.github.erotourtes.utils.ProcessSender
 import com.github.erotourtes.utils.runJarFile
+import com.github.erotourtes.utils.runNotify
 import javafx.stage.StageStyle
 import javafx.stage.Window
 import tornadofx.*
 import java.io.File
+import kotlin.concurrent.thread
 
 class MainController : Controller() {
     private var state = MainState()
@@ -19,6 +21,12 @@ class MainController : Controller() {
         model.item = state
     }
 
+    init {
+        Runtime.getRuntime().addShutdownHook(Thread {
+            dispose()
+        })
+    }
+
     fun showDialog() {
         val dialog = find<DialogView>()
         dialog.openModal(stageStyle = StageStyle.UTILITY)
@@ -26,7 +34,8 @@ class MainController : Controller() {
 
     fun runJar(window: Window?) {
         if (pc == null) {
-            val path = "/home/sirmax/Files/Documents/projects/kotlin/oop-labs-creating-last-step/lab6/out/artifacts/First_jar/tornadofx-maven-project.jar"
+            val path =
+                "/home/sirmax/Files/Documents/projects/kotlin/oop-labs-creating-last-step/lab6/out/artifacts/First_jar/tornadofx-maven-project.jar"
             val file = File(path)
 //            val file = FileChooser().apply {
 //                title = "Select jar file"
@@ -43,9 +52,14 @@ class MainController : Controller() {
 
     fun dispose() {
         pc?.let {
+            runNotify("Main App write message: $DESTROY")
             it.writeMessage(DESTROY)
-            it.close()
-            it.process.destroy()
+            thread {
+                it.close()
+                it.process.destroy()
+            }
+
+            it.process.waitFor()
         }
     }
 }
