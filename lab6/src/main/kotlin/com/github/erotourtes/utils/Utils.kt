@@ -8,11 +8,31 @@ fun runJarFile(file: File): Process? {
     return Runtime.getRuntime().exec("$java -jar $path")
 }
 
-fun logger(message: String) {
-//    val tempPath = "/home/sirmax/Files/Documents/projects/kotlin/oop-labs-creating-last-step/lab6/out/artifacts/log.txt"
-//    File(tempPath).appendText("$message\n")
-    println(message)
+object Logger {
+    var isLogging = true
+    var preMessage = ""
+
+    enum class InfoType {
+        INFO, ERROR, WARNING
+    }
+
+    val color = mapOf(
+        InfoType.INFO to "\u001B[32m",
+        InfoType.ERROR to "\u001B[31m",
+        InfoType.WARNING to "\u001B[33m",
+    )
+
+    val reset = "\u001B[0m"
+
+    fun log(message: String, type: InfoType = InfoType.INFO) {
+        if (!isLogging) return
+
+        println("${color[type]}$preMessage: $message$reset")
+    }
 }
+
+const val PROCESS_UPDATE_TIME = 100L
 
 const val DESTROY = "__destroy__"
 const val EMPTY = "__EMPTY__"
+const val DONE = "__DONE__"

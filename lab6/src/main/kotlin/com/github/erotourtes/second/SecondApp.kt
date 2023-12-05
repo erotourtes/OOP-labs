@@ -1,18 +1,22 @@
 package com.github.erotourtes.second
 
-import com.github.erotourtes.utils.DESTROY
-import com.github.erotourtes.utils.EMPTY
-import com.github.erotourtes.utils.SelfInputStreamReceiver
-import com.github.erotourtes.utils.logger
+import com.github.erotourtes.utils.*
 import javafx.application.Platform
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import tornadofx.*
+import java.lang.management.ManagementFactory
 
 
 class SecondApp : App(SecondView::class) {
+    override fun init() {
+        super.init()
+        val pid = ManagementFactory.getRuntimeMXBean().name
+        Logger.preMessage = "SecondApp($pid)"
+    }
+
     override fun stop() {
-        logger("SecondApp(stop)")
+        Logger.log("stop method")
         find<SecondController>().dispose()
     }
 }
@@ -23,9 +27,8 @@ class SecondController : Controller() {
 
     init {
         pReceiver.inputMessage.addListener { _, _, newValue ->
-            logger("SecondApp(message): $newValue")
             if (newValue == EMPTY) return@addListener
-            if (newValue == DESTROY || newValue == null) {
+            if (newValue == DESTROY) {
                 /*
                 Somehow when i close the process using `kill` the stop() hook is not fired up.
                 instead the parent sends through the stream null
@@ -42,7 +45,7 @@ class SecondController : Controller() {
     }
 
     fun dispose() {
-        logger("SecondApp(destroy)")
+        Logger.log("dispose")
         pReceiver.close()
     }
 }

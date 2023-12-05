@@ -7,19 +7,23 @@ import javafx.application.Platform
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import tornadofx.*
-import java.io.File
+import java.lang.management.ManagementFactory
 
 class FirstApp : App(FirstView::class) {
+    override fun init() {
+        super.init()
+        val pid = ManagementFactory.getRuntimeMXBean().name
+        Logger.preMessage = "FirstApp($pid)"
+    }
+
     override fun stop() {
-        logger("FirstApp(stop)")
+        Logger.log("stop method")
         find<FirstController>().dispose()
     }
 }
 
 class FirstController : Controller() {
     private val pReceiver = SelfInputStreamReceiver()
-    private var pOutReceiver: ProcessReceiver? = null
-    private var pSender: ProcessSender? = null
     private var state = MainState()
 
     val model: MainModel by inject()
@@ -27,10 +31,8 @@ class FirstController : Controller() {
 
     init {
         pReceiver.inputMessage.addListener { _, _, newMsg ->
-            logger("FirstApp(read): $newMsg")
             if (newMsg == EMPTY) return@addListener
             if (newMsg == DESTROY || newMsg == null) {
-                dispose()
                 Platform.exit()
                 return@addListener
             }
@@ -40,35 +42,22 @@ class FirstController : Controller() {
             model.item = state
 
             regenerateDiapason()
-
-            logger("FirstApp(check): $state ${pSender?.isAlive}")
-            if (pSender == null || !pSender!!.isAlive) initChildProcess()
-            pSender?.writeMessage(randoms.joinToString(separator = ","))
+            // TODO: send back
         }
     }
 
-    init {
-        Runtime.getRuntime().addShutdownHook(Thread {
-            dispose()
-        })
-    }
-
-    init {
-        initChildProcess()
-    }
-
-    private fun initChildProcess() {
-        logger("FirstApp(CHILDPROCESS)")
-        val path =
-            "/home/sirmax/Files/Documents/projects/kotlin/oop-labs-creating-last-step/lab6/out/artifacts/Second_jar/tornadofx-maven-project.jar"
-        runJarFile(File(path))?.let {
-            pSender?.close()
-            pSender = ProcessSender(it)
-
-            pOutReceiver?.close()
-            pOutReceiver = ProcessReceiver(it)
-        }
-    }
+//    private fun initChildProcess() {
+//        logger("FirstApp(CHILDPROCESS)")
+//        val path =
+//            "/home/sirmax/Files/Documents/projects/kotlin/oop-labs-creating-last-step/lab6/out/artifacts/Second_jar/tornadofx-maven-project.jar"
+//        runJarFile(File(path))?.let {
+//            pSender?.close()
+//            pSender = ProcessSender(it)
+//
+//            pOutReceiver?.close()
+//            pOutReceiver = ProcessReceiver(it)
+//        }
+//    }
 
     private fun regenerateDiapason() {
         val (n, min, max) = state
@@ -79,13 +68,7 @@ class FirstController : Controller() {
     }
 
     fun dispose() {
-        pSender?.let {
-            logger("FirstApp(send): $DESTROY")
-            it.writeMessage(DESTROY)
-            it.close()
-            it.process.destroy()
-        }
-        logger("FirstApp(DESTROY)")
+        Logger.log("dispose")
         pReceiver.close()
     }
 }

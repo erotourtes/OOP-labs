@@ -2,35 +2,28 @@ package com.github.erotourtes.utils
 
 import kotlin.concurrent.thread
 
-class ProcessReceiver(private val process: Process) {
+class ProcessReceiver(process: Process) {
     private val input = process.inputStream.bufferedReader()
     private var thread: Thread? = null
 
     init {
         thread = thread {
-            logger("-------------------------------start ProcessReceiver----------------------------")
             while (!Thread.currentThread().isInterrupted) {
-                logger("-------------------------------check ProcessReceiver----------------------------")
                 if (!input.ready()) {
-                    try {
-                        Thread.sleep(100)
-                    } catch (e: InterruptedException) {
-                        logger("ProcessReceiver(interrupted)")
-                        break
-                    }
+                    val res = runCatching { Thread.sleep(PROCESS_UPDATE_TIME) }
+                    if (res.isFailure) break
                     continue
                 }
                 val input = input.readLine()
-                logger("ProcessReceiver(read): $input")
+                Logger.log("INPUT: $input")
             }
-            logger("ProcessReceiver(interrupted-end)")
+            Logger.log("ProcessReceiver(interrupted-end)", Logger.InfoType.WARNING)
         }
     }
 
     fun close() {
         input.close()
-        thread?.interrupt() // TODO: fix it is not interrupting
+        thread?.interrupt()
         thread?.join()
-        logger("ProcessReceiver(close)")
     }
 }

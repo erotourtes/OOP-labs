@@ -7,21 +7,42 @@ import javafx.stage.StageStyle
 import tornadofx.*
 import java.io.File
 
+data class ProcessState(
+    val process: Process,
+    val sender: ProcessSender,
+    val receiver: ProcessReceiver
+) {
+    private var isAlive: Boolean = true
+    val alive get() = isAlive && process.isAlive
+
+    fun close() {
+        try {
+            sender.writeMessage(DESTROY)
+            Thread.sleep(1000) // to see process input
+            sender.close()
+            receiver.close()
+            process.destroy()
+            isAlive = false
+        } catch (e: Exception) {
+            Logger.log("ProcessState(close): $e", Logger.InfoType.ERROR)
+        }
+    }
+}
+
 class MainController : Controller() {
     private var state = MainState()
     private val model: MainModel by inject()
-    private var pSender: ProcessSender? = null
-    private var pOutReceiver: ProcessReceiver? = null
+    private var program1: ProcessState? = null
 
     init {
         model.item = state
     }
 
-    init {
-        Runtime.getRuntime().addShutdownHook(Thread {
-            dispose()
-        })
-    }
+//    init {
+//        Runtime.getRuntime().addShutdownHook(Thread {
+//            dispose()
+//        })
+//    }
 
     fun showDialog() {
         val dialog = find<DialogView>()
@@ -29,31 +50,23 @@ class MainController : Controller() {
     }
 
     fun send() {
-        if (pSender == null || !pSender!!.isAlive) initChildProcess()
-
-        pSender?.writeMessage(state.toString())
-        logger("MainApp(write): $state")
+        if (program1 == null || !program1!!.alive) initChildProcess()
+        program1!!.sender.writeMessage(state.toString())
     }
 
     private fun initChildProcess() {
-        logger("MainApp(CHILDPROCESS)")
+        Logger.log("child process init")
         val path =
             "/home/sirmax/Files/Documents/projects/kotlin/oop-labs-creating-last-step/lab6/out/artifacts/First_jar/tornadofx-maven-project.jar"
         runJarFile(File(path))?.let {
-            pSender?.close()
-            pSender = ProcessSender(it)
-            pOutReceiver = ProcessReceiver(it)
+            program1?.close()
+            program1 = ProcessState(it, ProcessSender(it), ProcessReceiver(it))
         }
     }
 
     fun dispose() {
-        pSender?.let {
-            logger("MainApp(write): $DESTROY")
-            it.writeMessage(DESTROY)
-            it.process.destroy()
-            it.close()
-        }
-        pOutReceiver?.close()
+        Logger.log("dispose")
+        program1?.close()
     }
 }
 
