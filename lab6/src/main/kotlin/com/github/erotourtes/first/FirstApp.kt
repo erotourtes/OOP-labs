@@ -36,11 +36,16 @@ class FirstController : Controller(), Closable {
     init {
         ee.subscribe(MessageType.DESTROY) { Platform.exit() }
         ee.subscribe(MessageType.DATA) {
-            Logger.log("INPUT: $it")
-            state = MainState.fromString(it) ?: return@subscribe
-            regenerateDiapason()
+            runCatching {
+                Logger.log("INPUT: $it")
+                state = MainState.fromString(it) ?: return@subscribe
+                regenerateDiapason()
 
-            pSender.send(ListConverter.toString(randoms))
+                pSender.send(ListConverter.toString(randoms))
+            }.onFailure {
+                Logger.log("FirstController: ${it.message}", Logger.InfoType.ERROR)
+                Platform.exit()
+            }
         }
     }
 

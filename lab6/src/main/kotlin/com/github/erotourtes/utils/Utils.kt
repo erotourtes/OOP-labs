@@ -1,6 +1,5 @@
 package com.github.erotourtes.utils
 
-import javafx.beans.property.StringProperty
 import javafx.beans.value.ObservableValue
 import java.io.File
 
@@ -47,15 +46,11 @@ object ListConverter {
 const val PROCESS_UPDATE_TIME = 100L
 
 enum class MessageType(val type: String) {
-    EMPTY("__EMPTY__"),
-    DATA("__DATA__"),
-    DESTROY("__DESTROY__"),
-    ON_DESTROY("__ON_DESTROY__");
+    EMPTY("__EMPTY__"), DATA("__DATA__"), DESTROY("__DESTROY__"), ON_DESTROY("__ON_DESTROY__");
 
 
     companion object {
-        fun getTypeOf(message: String): MessageType =
-            MessageType.entries.find { isOfType(it, message) } ?: EMPTY
+        fun getTypeOf(message: String): MessageType = MessageType.entries.find { isOfType(it, message) } ?: EMPTY
 
         fun isOfType(type: MessageType, message: String) = message.startsWith(type.type)
     }
@@ -67,4 +62,17 @@ interface Closable {
 
 interface StringObservable {
     fun getObservable(): ObservableValue<String>
+}
+
+fun formatPath(path: String?, takeLast: Int = 2): String {
+    if (path == null) return ""
+    var count = 0
+    for (i in path.indices.reversed()) {
+        val char = path[i]
+        if (char == '/') count++
+
+        if (count == takeLast) return path.substring(i + 1)
+    }
+
+    return path
 }

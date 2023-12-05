@@ -34,9 +34,14 @@ class SecondController : Controller(), Closable {
     init {
         ee.subscribe(MessageType.DESTROY) { Platform.exit() }
         ee.subscribe(MessageType.DATA) {
-            val list = ListConverter.toList(it, String::toDouble).sorted()
-            randoms.clear()
-            randoms.addAll(list)
+            runCatching {
+                val list = ListConverter.toList(it, String::toDouble).sorted()
+                randoms.clear()
+                randoms.addAll(list)
+            }.onFailure {
+                Logger.log("SecondController: ${it.message}", Logger.InfoType.ERROR)
+                Platform.exit()
+            }
         }
     }
 
