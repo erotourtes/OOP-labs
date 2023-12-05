@@ -3,6 +3,7 @@ package com.github.erotourtes.main.view
 import com.github.erotourtes.data.MainModel
 import com.github.erotourtes.data.MainState
 import com.github.erotourtes.utils.*
+import javafx.geometry.Pos
 import javafx.stage.StageStyle
 import tornadofx.*
 import java.io.File
@@ -88,7 +89,6 @@ class MainController : Controller() {
 
 class MainView : View("Main") {
     private val ctrl: MainController by inject()
-    private val model: MainModel by inject()
 
     override val root = vbox {
         menubar {
@@ -98,19 +98,8 @@ class MainView : View("Main") {
         }
 
         borderpane {
-            left = vbox {
-                label("n") {
-                    bind(model.nProp.stringBinding { "n = $it" })
-                }
-                label("min") {
-                    bind(model.minProp.stringBinding { "min = $it" })
-                }
-                label("max") {
-                    bind(model.maxProp.stringBinding { "max = $it" })
-                }
-            }
-
             center = vbox {
+                alignment = Pos.BASELINE_CENTER
                 button("RUN").action {
                     ctrl.send()
                 }
