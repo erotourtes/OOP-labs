@@ -16,5 +16,6 @@ class MainApp : App(MainView::class) {
     override fun stop() {
         Logger.log("stop method")
         find<MainController>().dispose()
+        Logger.log("stop method end", Logger.InfoType.WARNING)
     }
 }

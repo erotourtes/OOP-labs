@@ -35,4 +35,4 @@ const val PROCESS_UPDATE_TIME = 100L
 
 const val DESTROY = "__destroy__"
 const val EMPTY = "__EMPTY__"
-const val DONE = "__DONE__"
+const val DATA = "__DATA__"

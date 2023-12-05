@@ -19,14 +19,16 @@ class FirstApp : App(FirstView::class) {
     override fun stop() {
         Logger.log("stop method")
         find<FirstController>().dispose()
+        Logger.log("stop method end", Logger.InfoType.WARNING)
     }
 }
 
 class FirstController : Controller() {
-    private val pReceiver = SelfInputStreamReceiver()
+    private val pReceiver = StreamUtils()
+    private val pSender = SelfOutputStreamSender()
     private var state = MainState()
 
-    val model: MainModel by inject()
+    private val model: MainModel by inject()
     val randoms: ObservableList<Double> = FXCollections.observableArrayList()
 
     init {
@@ -42,22 +44,10 @@ class FirstController : Controller() {
             model.item = state
 
             regenerateDiapason()
-            // TODO: send back
+
+            pSender.send(randoms.javaClass, randoms.joinToString(","))
         }
     }
-
-//    private fun initChildProcess() {
-//        logger("FirstApp(CHILDPROCESS)")
-//        val path =
-//            "/home/sirmax/Files/Documents/projects/kotlin/oop-labs-creating-last-step/lab6/out/artifacts/Second_jar/tornadofx-maven-project.jar"
-//        runJarFile(File(path))?.let {
-//            pSender?.close()
-//            pSender = ProcessSender(it)
-//
-//            pOutReceiver?.close()
-//            pOutReceiver = ProcessReceiver(it)
-//        }
-//    }
 
     private fun regenerateDiapason() {
         val (n, min, max) = state
@@ -77,10 +67,6 @@ class FirstView : View("First View") {
     private val ctrl: FirstController by inject()
 
     override val root = vbox {
-        label("n").bind(ctrl.model.nProp.stringBinding { "n = $it" })
-        label("min").bind(ctrl.model.minProp.stringBinding { "min = $it" })
-        label("max").bind(ctrl.model.maxProp.stringBinding { "max = $it" })
-
         listview(ctrl.randoms)
     }
 }

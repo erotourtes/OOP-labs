@@ -5,8 +5,10 @@ import javafx.beans.property.SimpleStringProperty
 import java.io.*
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.concurrent.thread
+import kotlin.reflect.KFunction
+import kotlin.reflect.KProperty0
 
-class SelfInputStreamReceiver {
+class StreamUtils {
     val inputMessage = SimpleStringProperty()
     private var isReading = AtomicBoolean(true)
     private var readerThread: Thread? = null
@@ -39,5 +41,19 @@ class SelfInputStreamReceiver {
         inputMessage.value = null
 
 //        exitProcess(0) // TODO: fix the platform is not exit on thread close in the controller.dispose.pReceiver.close() // htink about disposing in a new thread
+    }
+}
+
+class SelfOutputStreamSender {
+    private fun formatMessage(clazz: Class<*>, message: String) = "$DATA(${clazz.name}): {$message}"
+    fun send(property: KProperty0<String>) {
+        val message = property.get()
+        Logger.log("OUTPUT: $message")
+        println(formatMessage(property.javaClass, message))
+    }
+
+    fun send(clazz: Class<*>, message: String) {
+        Logger.log("OUTPUT: $message")
+        println(formatMessage(clazz, message))
     }
 }

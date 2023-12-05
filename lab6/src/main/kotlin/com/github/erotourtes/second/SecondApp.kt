@@ -18,21 +18,18 @@ class SecondApp : App(SecondView::class) {
     override fun stop() {
         Logger.log("stop method")
         find<SecondController>().dispose()
+        Logger.log("stop method end", Logger.InfoType.WARNING)
     }
 }
 
 class SecondController : Controller() {
-    private val pReceiver = SelfInputStreamReceiver()
+    private val pReceiver = StreamUtils()
     val randoms: ObservableList<Double> = FXCollections.observableArrayList()
 
     init {
         pReceiver.inputMessage.addListener { _, _, newValue ->
             if (newValue == EMPTY) return@addListener
             if (newValue == DESTROY) {
-                /*
-                Somehow when i close the process using `kill` the stop() hook is not fired up.
-                instead the parent sends through the stream null
-                */
                 Platform.exit()
                 return@addListener
             }
