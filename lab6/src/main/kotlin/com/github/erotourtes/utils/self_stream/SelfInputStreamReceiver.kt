@@ -35,7 +35,7 @@ class SelfInputStreamReceiver : Closable, StringObservable {
     override fun close() {
         isReading.set(false)
         inputStream.close()
-        readerThread?.interrupt() // TODO: fix it is not interrupting
+        readerThread?.interrupt()
         readerThread?.join()
         input.value = MessageType.EMPTY.type
         /*
