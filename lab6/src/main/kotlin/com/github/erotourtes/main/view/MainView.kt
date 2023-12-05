@@ -10,6 +10,7 @@ import javafx.geometry.Pos
 import javafx.stage.StageStyle
 import tornadofx.*
 import java.io.File
+import kotlin.reflect.KMutableProperty0
 
 class ProcessState(
     private val process: Process,
@@ -42,7 +43,7 @@ class ProcessState(
     }
 }
 
-class MainController : Controller() {
+class MainController : Controller(), Closable {
     private var state = MainState()
     private val model: MainModel by inject()
     private var program1: ProcessState? = null
@@ -62,14 +63,18 @@ class MainController : Controller() {
         program1!!.sender.send(MessageType.DATA, state.toString())
     }
 
+    override fun close() {
+        Logger.log("dispose")
+        program1?.close()
+        program2?.close()
+    }
+
     private fun initChildProcessProgram1() {
         Logger.log("child process 1 init")
         val path =
             "/home/sirmax/Files/Documents/projects/kotlin/oop-labs-creating-last-step/lab6/out/artifacts/First_jar/tornadofx-maven-project.jar"
-        runJarFile(File(path))?.let {
-            program1?.close()
-            program1 = ProcessState(it, ProcessSender(it, EventEmitter.getFormatter()), ProcessReceiver(it))
-        }
+
+        runJar(File(path), ::program1)
 
         program1!!.ee.subscribe(MessageType.DATA) {
             val items = ListConverter.toList<Double>(it, String::toDouble)
@@ -84,19 +89,17 @@ class MainController : Controller() {
         Logger.log("child process 2 init")
         val path =
             "/home/sirmax/Files/Documents/projects/kotlin/oop-labs-creating-last-step/lab6/out/artifacts/Second_jar/tornadofx-maven-project.jar"
-        runJarFile(File(path))?.let {
-            program2?.close()
-            program2 = ProcessState(it, ProcessSender(it, EventEmitter.getFormatter()), ProcessReceiver(it))
-        }
-    }
-
-    fun dispose() {
-        Logger.log("dispose")
-        program1?.close()
-        program2?.close()
+        runJar(File(path), ::program2)
     }
 
     private fun isAlive(program: ProcessState?) = program?.alive ?: false
+
+    private fun runJar(file: File, property: KMutableProperty0<ProcessState?>) {
+        runJarFile(file)?.let {
+            property.get()?.close()
+            property.set(ProcessState(it, ProcessSender(it, EventEmitter.getFormatter()), ProcessReceiver(it)))
+        }
+    }
 }
 
 class MainView : View("Main") {

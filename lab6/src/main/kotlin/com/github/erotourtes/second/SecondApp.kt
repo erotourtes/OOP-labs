@@ -20,13 +20,13 @@ class SecondApp : App(SecondView::class) {
 
     override fun stop() {
         Logger.log("stop method")
-        find<SecondController>().dispose()
+        find<SecondController>().close()
         Logger.log("stop method end", Logger.InfoType.WARNING)
         super.stop()
     }
 }
 
-class SecondController : Controller() {
+class SecondController : Controller(), Closable {
     private val ee = EventEmitter(SelfInputStreamReceiver())
     private val pSender = SelfOutputStreamSender(EventEmitter.getFormatter())
     val randoms: ObservableList<Double> = FXCollections.observableArrayList()
@@ -40,7 +40,7 @@ class SecondController : Controller() {
         }
     }
 
-    fun dispose() {
+    override fun close() {
         Logger.log("dispose")
         pSender.send(MessageType.ON_DESTROY)
         ee.close()

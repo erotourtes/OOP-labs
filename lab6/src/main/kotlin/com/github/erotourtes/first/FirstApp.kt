@@ -20,13 +20,13 @@ class FirstApp : App(FirstView::class) {
 
     override fun stop() {
         Logger.log("stop method")
-        find<FirstController>().dispose()
+        find<FirstController>().close()
         Logger.log("stop method end", Logger.InfoType.WARNING)
         super.stop()
     }
 }
 
-class FirstController : Controller() {
+class FirstController : Controller(), Closable {
     private val ee = EventEmitter(SelfInputStreamReceiver())
     private val pSender = SelfOutputStreamSender(EventEmitter.getFormatter())
     private var state = MainState()
@@ -52,7 +52,7 @@ class FirstController : Controller() {
             randoms.add(min + (max - min) * Math.random())
     }
 
-    fun dispose() {
+    override fun close() {
         Logger.log("dispose")
         pSender.send(MessageType.ON_DESTROY)
         ee.close()
