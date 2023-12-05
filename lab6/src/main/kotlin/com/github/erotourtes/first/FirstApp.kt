@@ -54,7 +54,7 @@ class FirstController : Controller() {
 
     fun dispose() {
         Logger.log("dispose")
-        pSender.send(MessageType.DESTROY)
+        pSender.send(MessageType.ON_DESTROY)
         ee.close()
     }
 }

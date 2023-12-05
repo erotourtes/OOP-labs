@@ -13,7 +13,7 @@ class ProcessSender(process: Process, private val formatter: (MessageType, Strin
             outputStream.write(combined)
             outputStream.newLine()
             outputStream.flush()
-            Logger.log("write: $message")
+            Logger.log("write: $combined")
         }.onFailure {
             Logger.log("ProcessSender(writeMessage): ${it.message}", Logger.InfoType.ERROR)
         }

@@ -3,6 +3,7 @@ package com.github.erotourtes.second
 import com.github.erotourtes.utils.*
 import com.github.erotourtes.utils.EventEmitter
 import com.github.erotourtes.utils.self_stream.SelfInputStreamReceiver
+import com.github.erotourtes.utils.self_stream.SelfOutputStreamSender
 import javafx.application.Platform
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
@@ -27,6 +28,7 @@ class SecondApp : App(SecondView::class) {
 
 class SecondController : Controller() {
     private val ee = EventEmitter(SelfInputStreamReceiver())
+    private val pSender = SelfOutputStreamSender(EventEmitter.getFormatter())
     val randoms: ObservableList<Double> = FXCollections.observableArrayList()
 
     init {
@@ -40,6 +42,7 @@ class SecondController : Controller() {
 
     fun dispose() {
         Logger.log("dispose")
+        pSender.send(MessageType.ON_DESTROY)
         ee.close()
     }
 }

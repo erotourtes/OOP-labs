@@ -20,11 +20,18 @@ class ProcessState(
     val ee = EventEmitter(receiver)
 
     private var isAlive: Boolean = true
+    private var isDestroyedMsgReceived: Boolean = false
+
+    init {
+        ee.subscribe(MessageType.ON_DESTROY) { isDestroyedMsgReceived = true }
+    }
 
     fun close() {
         runCatching {
             sender.send(MessageType.DESTROY)
-            Thread.sleep(1000) // to see process input
+            // To see the logs
+            while (!isDestroyedMsgReceived) Thread.sleep(PROCESS_UPDATE_TIME)
+            Logger.log("process has closed ${process.isAlive}")
             sender.close()
             ee.close()
             process.destroy()
