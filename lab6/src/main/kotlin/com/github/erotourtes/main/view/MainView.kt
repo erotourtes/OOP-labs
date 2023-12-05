@@ -15,15 +15,15 @@ data class ProcessState(
     val alive get() = isAlive && process.isAlive
 
     fun close() {
-        try {
+        runCatching {
             sender.writeMessage(DESTROY)
             Thread.sleep(1000) // to see process input
             sender.close()
             receiver.close()
             process.destroy()
             isAlive = false
-        } catch (e: Exception) {
-            Logger.log("ProcessState(close): $e", Logger.InfoType.ERROR)
+        }.onFailure {
+            Logger.log("ProcessState(close): ${it.message}", Logger.InfoType.ERROR)
         }
     }
 }

@@ -11,6 +11,7 @@ class MainModel : ItemViewModel<MainState>() {
     override fun onCommit() {
         super.onCommit()
         if (min > max) throw IllegalStateException("min > max")
+        if (n < 0) throw IllegalStateException("n < 0")
     }
 
     val min by minProp
@@ -25,12 +26,10 @@ data class MainState(var n: Int = 0, var minValue: Double = 0.0, var maxValue: D
 
     companion object {
         fun fromString(string: String): MainState? {
-            return try {
+            return runCatching {
                 val values = string.split(" ")
                 MainState(values[0].toInt(), values[1].toDouble(), values[2].toDouble())
-            } catch (e: Exception) {
-                null
-            }
+            }.getOrNull()
         }
     }
 }
