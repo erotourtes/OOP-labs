@@ -19,6 +19,7 @@ class SecondApp : App(SecondView::class) {
         Logger.log("stop method")
         find<SecondController>().dispose()
         Logger.log("stop method end", Logger.InfoType.WARNING)
+        super.stop()
     }
 }
 

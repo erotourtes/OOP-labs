@@ -20,6 +20,7 @@ class FirstApp : App(FirstView::class) {
         Logger.log("stop method")
         find<FirstController>().dispose()
         Logger.log("stop method end", Logger.InfoType.WARNING)
+        super.stop()
     }
 }
 

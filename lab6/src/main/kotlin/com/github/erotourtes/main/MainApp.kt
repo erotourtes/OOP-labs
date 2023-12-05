@@ -17,5 +17,6 @@ class MainApp : App(MainView::class) {
         Logger.log("stop method")
         find<MainController>().dispose()
         Logger.log("stop method end", Logger.InfoType.WARNING)
+        super.stop()
     }
 }

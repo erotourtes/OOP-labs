@@ -36,9 +36,9 @@ class SelfInputStreamReceiver {
         reader.close()
         readerThread?.interrupt() // TODO: fix it is not interrupting
         readerThread?.join()
-        inputMessage.value = DESTROY
+        inputMessage.value = EMPTY
         /*
-            used to receive `null` (now DESTROY) msg in the inputMessage listener
+            used to receive `null` (now EMPTY) msg in the inputMessage listener
             because FirstController.dispose when close stream sets inputMessage to null
             and then from the JavaFX thread I call Platform.exit()
             if I don't call Platform.exit() then the app will not close and the process will not be destroyed,
@@ -46,6 +46,11 @@ class SelfInputStreamReceiver {
 
             So the sequence is:
             1. App.close() -> 2. FirstController.dispose() -> 3. SelfInputStreamReceiver.close() -> 4. Platform.exit()
+
+            All because the documentation says:
+            "The implementation of this (app.stop()) method provided by the Application class does nothing.",
+            which is lie because it stops the app
+            (maybe it stops the javafx thread, but I don't have my own daemon threads, so the process stops)
          */
     }
 }
