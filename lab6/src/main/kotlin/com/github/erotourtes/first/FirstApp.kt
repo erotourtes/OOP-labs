@@ -1,8 +1,10 @@
 package com.github.erotourtes.first
 
-import com.github.erotourtes.data.MainModel
 import com.github.erotourtes.data.MainState
 import com.github.erotourtes.utils.*
+import com.github.erotourtes.utils.EventEmitter
+import com.github.erotourtes.utils.self_stream.SelfInputStreamReceiver
+import com.github.erotourtes.utils.self_stream.SelfOutputStreamSender
 import javafx.application.Platform
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
@@ -25,24 +27,20 @@ class FirstApp : App(FirstView::class) {
 }
 
 class FirstController : Controller() {
-    private val pReceiver = SelfInputStreamReceiver()
-    private val pSender = SelfOutputStreamSender()
+    private val ee = EventEmitter(SelfInputStreamReceiver())
+    private val pSender = SelfOutputStreamSender(EventEmitter.getFormatter())
     private var state = MainState()
 
     val randoms: ObservableList<Double> = FXCollections.observableArrayList()
 
     init {
-        pReceiver.inputMessage.addListener { _, _, newMsg ->
-            if (newMsg == EMPTY) return@addListener
-            if (newMsg == DESTROY) {
-                Platform.exit()
-                return@addListener
-            }
-
-            state = MainState.fromString(newMsg) ?: return@addListener
+        ee.subscribe(MessageType.DESTROY) { Platform.exit() }
+        ee.subscribe(MessageType.DATA) {
+            Logger.log("INPUT: $it")
+            state = MainState.fromString(it) ?: return@subscribe
             regenerateDiapason()
 
-            pSender.send(List::class.java, ListConverter.toString(randoms))
+            pSender.send(ListConverter.toString(randoms))
         }
     }
 
@@ -56,7 +54,8 @@ class FirstController : Controller() {
 
     fun dispose() {
         Logger.log("dispose")
-        pReceiver.close()
+        pSender.send(MessageType.DESTROY)
+        ee.close()
     }
 }
 

@@ -1,11 +1,16 @@
-package com.github.erotourtes.utils
+package com.github.erotourtes.utils.process_stream
 
-class ProcessSender(process: Process) {
+import com.github.erotourtes.utils.Closable
+import com.github.erotourtes.utils.Logger
+import com.github.erotourtes.utils.MessageType
+
+class ProcessSender(process: Process, private val formatter: (MessageType, String) -> String) : Closable {
     private val outputStream = process.outputStream.bufferedWriter()
 
-    fun writeMessage(message: String) {
+    fun send(type: MessageType, message: String = "") {
         runCatching {
-            outputStream.write(message)
+            val combined = formatter(type, message)
+            outputStream.write(combined)
             outputStream.newLine()
             outputStream.flush()
             Logger.log("write: $message")
@@ -14,7 +19,7 @@ class ProcessSender(process: Process) {
         }
     }
 
-    fun close() {
+    override fun close() {
         runCatching { outputStream.close() }.onFailure {
             Logger.log("ProcessSender(close): ${it.message}", Logger.InfoType.ERROR)
         }

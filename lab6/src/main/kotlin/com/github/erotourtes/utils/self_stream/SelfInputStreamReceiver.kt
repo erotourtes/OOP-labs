@@ -1,29 +1,30 @@
-package com.github.erotourtes.utils
+package com.github.erotourtes.utils.self_stream
 
+import com.github.erotourtes.utils.*
 import javafx.application.Platform
 import javafx.beans.property.SimpleStringProperty
 import java.io.*
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.concurrent.thread
 
-class SelfInputStreamReceiver {
-    val inputMessage = SimpleStringProperty()
+class SelfInputStreamReceiver : Closable, StringObservable {
+    private val input = SimpleStringProperty()
     private var isReading = AtomicBoolean(true)
     private var readerThread: Thread? = null
-    private val reader = BufferedReader(InputStreamReader(System.`in`))
+    private val inputStream = BufferedReader(InputStreamReader(System.`in`))
 
     init {
         readerThread = thread(start = true, isDaemon = false) {
             while (isReading.get() && !Thread.currentThread().isInterrupted) {
-                if (!reader.ready()) {
+                if (!inputStream.ready()) {
                     val res = runCatching { Thread.sleep(PROCESS_UPDATE_TIME) }
                     if (res.isFailure) break
                     continue
                 }
-                val input = reader.readLine()
+                val input = inputStream.readLine()
                 Platform.runLater {
-                    if (input == inputMessage.value) inputMessage.value = EMPTY
-                    inputMessage.value = input
+                    if (input == this.input.value) this.input.value = MessageType.EMPTY.type
+                    this.input.value = input
                     Logger.log("INPUT: $input")
                 }
             }
@@ -31,12 +32,12 @@ class SelfInputStreamReceiver {
         }
     }
 
-    fun close() {
+    override fun close() {
         isReading.set(false)
-        reader.close()
+        inputStream.close()
         readerThread?.interrupt() // TODO: fix it is not interrupting
         readerThread?.join()
-        inputMessage.value = EMPTY
+        input.value = MessageType.EMPTY.type
         /*
             used to receive `null` (now EMPTY) msg in the inputMessage listener
             because FirstController.dispose when close stream sets inputMessage to null
@@ -53,18 +54,6 @@ class SelfInputStreamReceiver {
             (maybe it stops the javafx thread, but I don't have my own daemon threads, so the process stops)
          */
     }
-}
 
-class SelfOutputStreamSender {
-    private fun formatMessage(clazz: Class<*>, message: String) = "$DATA(${clazz.name}): {$message}"
-
-    fun send(clazz: Class<*>, message: String) {
-        Logger.log("OUTPUT: $message")
-        println(formatMessage(clazz, message))
-    }
-
-    fun send(msg: String) {
-        Logger.log("OUTPUT: $msg")
-        println(msg)
-    }
+    override fun getObservable() = input
 }

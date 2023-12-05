@@ -1,5 +1,7 @@
 package com.github.erotourtes.utils
 
+import javafx.beans.property.StringProperty
+import javafx.beans.value.ObservableValue
 import java.io.File
 
 fun runJarFile(file: File): Process? {
@@ -35,6 +37,7 @@ object ListConverter {
     inline fun <reified T> toString(list: List<T>): String = list.joinToString(",")
 
     inline fun <reified T> toList(string: String, converter: (String) -> T): List<T> {
+        if (string.isEmpty()) return emptyList()
         return string.split(",").map {
             converter(it.trim())
         }
@@ -43,7 +46,25 @@ object ListConverter {
 
 const val PROCESS_UPDATE_TIME = 100L
 
-const val DESTROY = "__DESTROY__"
-const val EMPTY = "__EMPTY__"
-const val DATA = "__DATA__"
-const val ON_DESTROY = "__ON_DESTROY__"
+enum class MessageType(val type: String) {
+    EMPTY("__EMPTY__"),
+    DATA("__DATA__"),
+    DESTROY("__DESTROY__"),
+    ON_DESTROY("__ON_DESTROY__");
+
+
+    companion object {
+        fun getTypeOf(message: String): MessageType =
+            MessageType.entries.find { isOfType(it, message) } ?: EMPTY
+
+        fun isOfType(type: MessageType, message: String) = message.startsWith(type.type)
+    }
+}
+
+interface Closable {
+    fun close()
+}
+
+interface StringObservable {
+    fun getObservable(): ObservableValue<String>
+}

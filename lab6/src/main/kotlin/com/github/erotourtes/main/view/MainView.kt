@@ -3,23 +3,30 @@ package com.github.erotourtes.main.view
 import com.github.erotourtes.data.MainModel
 import com.github.erotourtes.data.MainState
 import com.github.erotourtes.utils.*
+import com.github.erotourtes.utils.EventEmitter
+import com.github.erotourtes.utils.process_stream.ProcessReceiver
+import com.github.erotourtes.utils.process_stream.ProcessSender
 import javafx.geometry.Pos
 import javafx.stage.StageStyle
 import tornadofx.*
 import java.io.File
 
-data class ProcessState(
-    val process: Process, val sender: ProcessSender, val receiver: ProcessReceiver
+class ProcessState(
+    private val process: Process,
+    val sender: ProcessSender,
+    receiver: ProcessReceiver,
 ) {
-    private var isAlive: Boolean = true
     val alive get() = isAlive && process.isAlive
+    val ee = EventEmitter(receiver)
+
+    private var isAlive: Boolean = true
 
     fun close() {
         runCatching {
-            sender.writeMessage(DESTROY)
+            sender.send(MessageType.DESTROY)
             Thread.sleep(1000) // to see process input
             sender.close()
-            receiver.close()
+            ee.close()
             process.destroy()
             isAlive = false
         }.onFailure {
@@ -45,7 +52,7 @@ class MainController : Controller() {
 
     fun send() {
         if (!isAlive(program1)) initChildProcessProgram1()
-        program1!!.sender.writeMessage(state.toString())
+        program1!!.sender.send(MessageType.DATA, state.toString())
     }
 
     private fun initChildProcessProgram1() {
@@ -54,17 +61,15 @@ class MainController : Controller() {
             "/home/sirmax/Files/Documents/projects/kotlin/oop-labs-creating-last-step/lab6/out/artifacts/First_jar/tornadofx-maven-project.jar"
         runJarFile(File(path))?.let {
             program1?.close()
-            program1 = ProcessState(it, ProcessSender(it), ProcessReceiver(it))
+            program1 = ProcessState(it, ProcessSender(it, EventEmitter.getFormatter()), ProcessReceiver(it))
         }
 
-        program1!!.receiver.inputData.addListener { _, _, newMsg ->
-            if (newMsg == EMPTY) return@addListener
-            if (newMsg.isEmpty()) return@addListener
+        program1!!.ee.subscribe(MessageType.DATA) {
+            val items = ListConverter.toList<Double>(it, String::toDouble)
+            if (items.isEmpty()) return@subscribe
 
-            val items = ListConverter.toList<Double>(newMsg, String::toDouble)
-            Logger.log(items.toString(), Logger.InfoType.WARNING)
             if (!isAlive(program2)) initChildProcessProgram2()
-            program2!!.sender.writeMessage(ListConverter.toString(items))
+            program2!!.sender.send(MessageType.DATA, ListConverter.toString(items))
         }
     }
 
@@ -74,7 +79,7 @@ class MainController : Controller() {
             "/home/sirmax/Files/Documents/projects/kotlin/oop-labs-creating-last-step/lab6/out/artifacts/Second_jar/tornadofx-maven-project.jar"
         runJarFile(File(path))?.let {
             program2?.close()
-            program2 = ProcessState(it, ProcessSender(it), ProcessReceiver(it))
+            program2 = ProcessState(it, ProcessSender(it, EventEmitter.getFormatter()), ProcessReceiver(it))
         }
     }
 
