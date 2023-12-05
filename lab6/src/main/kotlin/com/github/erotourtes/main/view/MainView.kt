@@ -12,37 +12,6 @@ import tornadofx.*
 import java.io.File
 import kotlin.reflect.KMutableProperty0
 
-class ProcessState(
-    private val process: Process,
-    val sender: ProcessSender,
-    receiver: ProcessReceiver,
-) {
-    val alive get() = isAlive && process.isAlive
-    val ee = EventEmitter(receiver)
-
-    private var isAlive: Boolean = true
-    private var isDestroyedMsgReceived: Boolean = false
-
-    init {
-        ee.subscribe(MessageType.ON_DESTROY) { isDestroyedMsgReceived = true }
-    }
-
-    fun close() {
-        runCatching {
-            sender.send(MessageType.DESTROY)
-            // To see the logs
-            while (!isDestroyedMsgReceived) Thread.sleep(PROCESS_UPDATE_TIME)
-            Logger.log("process has closed ${process.isAlive}")
-            sender.close()
-            ee.close()
-            process.destroy()
-            isAlive = false
-        }.onFailure {
-            Logger.log("ProcessState(close): ${it.message}", Logger.InfoType.ERROR)
-        }
-    }
-}
-
 class MainController : Controller(), Closable {
     private var state = MainState()
     private val model: MainModel by inject()
