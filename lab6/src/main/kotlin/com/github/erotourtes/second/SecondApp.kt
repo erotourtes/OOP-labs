@@ -23,19 +23,18 @@ class SecondApp : App(SecondView::class) {
 }
 
 class SecondController : Controller() {
-    private val pReceiver = StreamUtils()
+    private val pReceiver = SelfInputStreamReceiver()
     val randoms: ObservableList<Double> = FXCollections.observableArrayList()
 
     init {
         pReceiver.inputMessage.addListener { _, _, newValue ->
-            if (newValue == EMPTY) return@addListener
+            if (newValue == EMPTY || newValue.isEmpty()) return@addListener
             if (newValue == DESTROY) {
                 Platform.exit()
                 return@addListener
             }
 
-            val list = if (newValue.isEmpty()) emptyList() else newValue.splitToSequence(",")
-                .map { it.trimIndent().toDouble() }.sorted().toList()
+            val list = ListConverter.toList(newValue, String::toDouble).sorted()
             randoms.clear()
             randoms.addAll(list)
         }

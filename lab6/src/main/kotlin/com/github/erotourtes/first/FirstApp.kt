@@ -24,28 +24,24 @@ class FirstApp : App(FirstView::class) {
 }
 
 class FirstController : Controller() {
-    private val pReceiver = StreamUtils()
+    private val pReceiver = SelfInputStreamReceiver()
     private val pSender = SelfOutputStreamSender()
     private var state = MainState()
 
-    private val model: MainModel by inject()
     val randoms: ObservableList<Double> = FXCollections.observableArrayList()
 
     init {
         pReceiver.inputMessage.addListener { _, _, newMsg ->
             if (newMsg == EMPTY) return@addListener
-            if (newMsg == DESTROY || newMsg == null) {
+            if (newMsg == DESTROY) {
                 Platform.exit()
                 return@addListener
             }
 
-            val newState = MainState.fromString(newMsg) ?: return@addListener
-            state = newState
-            model.item = state
-
+            state = MainState.fromString(newMsg) ?: return@addListener
             regenerateDiapason()
 
-            pSender.send(randoms.javaClass, randoms.joinToString(","))
+            pSender.send(List::class.java, ListConverter.toString(randoms))
         }
     }
 

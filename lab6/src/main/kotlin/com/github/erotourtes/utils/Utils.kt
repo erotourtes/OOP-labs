@@ -31,8 +31,19 @@ object Logger {
     }
 }
 
+object ListConverter {
+    inline fun <reified T> toString(list: List<T>): String = list.joinToString(",")
+
+    inline fun <reified T> toList(string: String, converter: (String) -> T): List<T> {
+        return string.split(",").map {
+            converter(it.trim())
+        }
+    }
+}
+
 const val PROCESS_UPDATE_TIME = 100L
 
-const val DESTROY = "__destroy__"
+const val DESTROY = "__DESTROY__"
 const val EMPTY = "__EMPTY__"
 const val DATA = "__DATA__"
+const val ON_DESTROY = "__ON_DESTROY__"

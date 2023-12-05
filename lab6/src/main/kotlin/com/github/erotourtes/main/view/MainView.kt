@@ -60,11 +60,10 @@ class MainController : Controller() {
             if (newMsg == EMPTY) return@addListener
             if (newMsg.isEmpty()) return@addListener
 
-            val items = newMsg.split(",").map { it.toDouble() }
+            val items = ListConverter.toList<Double>(newMsg, String::toDouble)
             Logger.log(items.toString(), Logger.InfoType.WARNING)
-
-            if (isAlive(program2)) initChildProcessProgram2()
-            program2!!.sender.writeMessage(items.joinToString(","))
+            if (!isAlive(program2)) initChildProcessProgram2()
+            program2!!.sender.writeMessage(ListConverter.toString(items))
         }
     }
 

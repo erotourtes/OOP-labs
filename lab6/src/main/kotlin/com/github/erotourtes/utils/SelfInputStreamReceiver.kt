@@ -5,10 +5,8 @@ import javafx.beans.property.SimpleStringProperty
 import java.io.*
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.concurrent.thread
-import kotlin.reflect.KFunction
-import kotlin.reflect.KProperty0
 
-class StreamUtils {
+class SelfInputStreamReceiver {
     val inputMessage = SimpleStringProperty()
     private var isReading = AtomicBoolean(true)
     private var readerThread: Thread? = null
@@ -38,22 +36,30 @@ class StreamUtils {
         reader.close()
         readerThread?.interrupt() // TODO: fix it is not interrupting
         readerThread?.join()
-        inputMessage.value = null
+        inputMessage.value = DESTROY
+        /*
+            used to receive `null` (now DESTROY) msg in the inputMessage listener
+            because FirstController.dispose when close stream sets inputMessage to null
+            and then from the JavaFX thread I call Platform.exit()
+            if I don't call Platform.exit() then the app will not close and the process will not be destroyed,
+            even if stop() method is called
 
-//        exitProcess(0) // TODO: fix the platform is not exit on thread close in the controller.dispose.pReceiver.close() // htink about disposing in a new thread
+            So the sequence is:
+            1. App.close() -> 2. FirstController.dispose() -> 3. SelfInputStreamReceiver.close() -> 4. Platform.exit()
+         */
     }
 }
 
 class SelfOutputStreamSender {
     private fun formatMessage(clazz: Class<*>, message: String) = "$DATA(${clazz.name}): {$message}"
-    fun send(property: KProperty0<String>) {
-        val message = property.get()
-        Logger.log("OUTPUT: $message")
-        println(formatMessage(property.javaClass, message))
-    }
 
     fun send(clazz: Class<*>, message: String) {
         Logger.log("OUTPUT: $message")
         println(formatMessage(clazz, message))
+    }
+
+    fun send(msg: String) {
+        Logger.log("OUTPUT: $msg")
+        println(msg)
     }
 }
