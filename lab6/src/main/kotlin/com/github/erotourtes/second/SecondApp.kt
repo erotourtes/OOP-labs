@@ -7,6 +7,7 @@ import com.github.erotourtes.utils.self_stream.SelfOutputStreamSender
 import javafx.application.Platform
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
+import javafx.scene.layout.Priority
 import tornadofx.*
 import java.lang.management.ManagementFactory
 
@@ -56,6 +57,6 @@ class SecondView : View("Second View") {
     private val ctrl by inject<SecondController>()
 
     override val root = vbox {
-        listview(ctrl.randoms)
+        listview(ctrl.randoms) { vgrow = Priority.ALWAYS }
     }
 }
